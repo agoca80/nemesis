@@ -24,19 +24,3 @@ func (p *Player) chooseCorridor() *Corridor {
 	}
 	return options[rand.Intn(len(options))]
 }
-
-func (p *Player) AskAction() *ActionPlayer {
-	if p.HandSize() < 1 {
-		p.Passes()
-		return nil
-	} else {
-		p.Discard(p.Hand[0])
-		p.Hand = p.Hand[1:]
-	}
-
-	return &ActionPlayer{
-		Player:   p,
-		Action:   ActionBasic(basic_move),
-		Corridor: p.chooseCorridor(),
-	}
-}

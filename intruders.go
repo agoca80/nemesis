@@ -38,11 +38,11 @@ func (i *Intruder) Enters(area *Area) {
 func (i *Intruder) Moves(number int) {
 	corridor := i.Corridor(number)
 	if corridor.Door == door_closed {
-		Show(i, "destroys", corridor, "door!")
+		Show(i, "in area", i.Area, "destroys", corridor.Numbers, "door!")
 		corridor.Door = door_broken
 		return
 	} else {
-		Show(i, "moves to", corridor.Area)
+		Show(i, "in area", i.Area, "moves to", corridor.Area, "through corridor", corridor.Numbers)
 		i.Leaves()
 		i.Enters(corridor.Area)
 	}

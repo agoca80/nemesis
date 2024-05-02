@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -43,44 +42,6 @@ func (game *Game) ResolveEncounter(p *Player) {
 	if p.IsSurprised(token) {
 		Show(p, "is surprised by", intruder)
 		game.ResolveIntruderAttack(intruder, p)
-	}
-}
-
-func (g *Game) ResolveMove(action *ActionPlayer) {
-	player := action.Player
-	corridor := action.Corridor
-	area := action.Player.Area
-	if player.IsInCombat() {
-		Show(player, "tries to leave", player.Area)
-		player.Area.Intruders.Attack(player)
-	}
-
-	if !player.Alive() {
-		return
-	}
-
-	// Show(player, "moves from", player.Area, "to", corridor.Area, "through", corridor.Numbers)
-	area.RemPlayer(player)
-	area = corridor.Area
-	wasEmpty := area.IsEmpty()
-	player.Area, area.Players = area, append(area.Players, player)
-	Show(player, "enters", area)
-
-	if !wasEmpty {
-		return
-	}
-
-	var event string
-	if !area.IsExplored() {
-		event = g.ResolveExploration(player, corridor)
-	}
-
-	if g.Destroyed() {
-		Pending("The ship has been destroyed!!!")
-	}
-
-	if event != ev_danger && event != ev_silence {
-		g.ResolveNoise(player)
 	}
 }
 
@@ -134,14 +95,14 @@ func (g *Game) ResolveNoise(p *Player) {
 
 	switch result {
 	case ev_silence:
-		Show("There is no noise")
+		Show(p, "makes no noise")
 	case ev_danger:
 		Show(p.Area, "is in danger!")
 		p.Danger()
 	default:
 		n, _ := strconv.Atoi(result)
 		corridor := p.Corridor(n)
-		Show("Noise in corridor", p.Area, corridor.Numbers)
+		Show(p, "makes noise in corridor", corridor.Numbers)
 		if corridor.Noise {
 			for _, c := range p.Area.Corridors {
 				c.Noise = false
@@ -160,34 +121,6 @@ func (g *Game) ResolveNoise(p *Player) {
 func Roll(dice []string) string {
 	face := rand.Intn(len(dice))
 	return dice[face]
-}
-
-type ActionPlayer struct {
-	Action
-	*Player
-	*Corridor
-}
-
-func (g *Game) AskAction(p *Player) (nextAction bool) {
-	action := p.AskAction()
-	if action == nil {
-
-		return
-	}
-
-	actions := map[string]func(*ActionPlayer){
-		basic_move: g.ResolveMove,
-	}
-
-	if fn, ok := actions[action.Name()]; !ok {
-		Show("PENDING ACTION", action)
-		os.Exit(1)
-	} else {
-		Show()
-		fn(action)
-	}
-
-	return true
 }
 
 func (g *Game) RemIntruder(i *Intruder) {
@@ -229,9 +162,10 @@ func (g *Game) Run() {
 	s := Step(step_draw)
 	for g.GoingOn() {
 		Show(strings.Repeat("-", 80))
-		Show("STEP", s)
+		Show(strings.ToUpper(string(s)))
 		s = step[s]()
 	}
 
-	Pending("Game over!!!")
+	g.Players.Show()
+	Show("Game over!!!")
 }

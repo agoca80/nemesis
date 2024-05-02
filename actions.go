@@ -2,11 +2,6 @@ package main
 
 type ActionBasic string
 
-type Action interface {
-	Name() string
-	Cost() int
-}
-
 func (a ActionBasic) Name() string {
 	return string(a)
 }

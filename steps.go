@@ -33,29 +33,34 @@ func (g *Game) token() Step {
 }
 
 func (game *Game) turn() Step {
+	round := func(players Players) (goingOn Players) {
+		for _, player := range players {
+			if player.GoingOn() {
+				game.GetAction(player)
+			}
+			if game.gameOver() {
+				return
+			}
+			if player.GoingOn() {
+				game.GetAction(player)
+			}
+		}
+
+		if game.gameOver() {
+			return
+		}
+
+		return players.GoingOn()
+	}
+
 	players := game.Players.Alive()
 	for _, p := range players {
 		p.Unflips()
 	}
 
-	for {
-		for _, player := range players {
-			Show()
-			Show("TURN", player)
-			game.AskAction(player)
-			if game.GoingOn() && player.GoingOn() {
-				game.AskAction(player)
-			}
-		}
-
-		if game.gameOver() {
-			break
-		}
-
-		players = players.GoingOn()
-		if len(players) == 0 {
-			break
-		}
+	goingOn := players.GoingOn()
+	for game.GoingOn() && len(goingOn) > 0 {
+		goingOn = round(goingOn)
 	}
 
 	return step_counters
@@ -141,6 +146,7 @@ func (g *Game) evolution() Step {
 		var nest *Area
 		for _, a := range g.Area {
 			if a.Name() == room_nest {
+				nest = a
 				break
 			}
 		}
