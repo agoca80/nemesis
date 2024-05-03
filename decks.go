@@ -60,7 +60,7 @@ func (c Cards) shuffle() (shuffled Cards) {
 	return
 }
 
-func NewDeck(cards Cards) (d *Deck) {
+func newDeck(cards Cards) (d *Deck) {
 	deckId, cardId = deckId+1, 0
 	return &Deck{
 		cards:    cards.shuffle(),

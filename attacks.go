@@ -23,7 +23,7 @@ func attackByte(i *Intruder, p *Player) {
 
 func attackClaws(i *Intruder, p *Player) {
 	Show(i, "attacks", p, "with its claws!")
-	p.Discard(game.Contamination.Draw())
+	p.Discard(contamination.Draw())
 	p.SuffersLightWound()
 	if p.Alive() {
 		p.SuffersLightWound()
@@ -43,7 +43,7 @@ func attackFrenzy(i *Intruder, p *Player) {
 
 func attackMucosity(i *Intruder, p *Player) {
 	Show(i, "covers", p, " in mucus!")
-	p.Discard(game.Contamination.Draw())
+	p.Discard(contamination.Draw())
 	p.IsDrenched = true
 }
 
@@ -59,7 +59,7 @@ func attackRecall(i *Intruder, p *Player) {
 
 func attackScratch(i *Intruder, p *Player) {
 	Show(i, "scratches", p, "!")
-	p.Discard(game.Contamination.Draw())
+	p.Discard(contamination.Draw())
 	p.SuffersLightWound()
 }
 
@@ -118,7 +118,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 		return
 	}
 
-	attack := game.Attacks.Next().(*AttackCard)
+	attack := attacks.Next().(*AttackCard)
 	if !attack.Includes(i.Kind) {
 		Show(i, "attacks", p, "but fails!")
 		return

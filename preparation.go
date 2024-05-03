@@ -11,26 +11,26 @@ func (game *Game) Prepare(coop bool) {
 	// Prepare 2
 	for _, a := range game.Area {
 		if a.Class == room_2 {
-			a.Room = game.Rooms2.Draw().(*Room)
+			a.Room = rooms2.Draw().(*Room)
 		}
 	}
 
 	// Prepare 3
 	for _, a := range game.Area {
 		if a.Class == room_1 {
-			a.Room = game.Rooms1.Draw().(*Room)
+			a.Room = rooms1.Draw().(*Room)
 		}
 	}
 
 	// Prepare 4
 	for _, a := range game.Area {
 		if a.Class == room_1 || a.Class == room_2 {
-			a.ExplorationToken = game.ExplorationTokens.Draw().(*ExplorationToken)
+			a.ExplorationToken = explorationTokens.Draw().(*ExplorationToken)
 		}
 	}
 
 	// Initialize coordinates card
-	game.CoordinateCard = game.Coordinates.Draw().(*Coordinates)
+	game.CoordinateCard = coordinates.Draw().(*Coordinates)
 
 	// Initialize destination
 	game.Destination = "B"
@@ -57,9 +57,9 @@ func (game *Game) Prepare(coop bool) {
 	// Initialize intruder board
 	game.Eggs = 5
 	game.Weakness = []*Weakness{
-		game.Weaknesses.Draw().(*Weakness),
-		game.Weaknesses.Draw().(*Weakness),
-		game.Weaknesses.Draw().(*Weakness),
+		weaknesses.Draw().(*Weakness),
+		weaknesses.Draw().(*Weakness),
+		weaknesses.Draw().(*Weakness),
 	}
 
 	// Initialize intruder bag
@@ -81,7 +81,7 @@ func (game *Game) Prepare(coop bool) {
 		NewHelpCard(4),
 		NewHelpCard(5),
 	}
-	helpDeck := NewDeck(helpCards[:len(game.Players)])
+	helpDeck := newDeck(helpCards[:len(game.Players)])
 	for _, p := range game.Players {
 		p.HelpCard = helpDeck.Draw().(*HelpCard)
 	}
@@ -97,12 +97,12 @@ func (game *Game) Prepare(coop bool) {
 
 	// Crew preparation step 17
 	for _, p := range game.Players {
-		p.chooseCharacter(game.Characters)
+		p.chooseCharacter(characters)
 	}
 
 	// Crew preparation step 18
 	for _, p := range game.Players {
-		p.Deck = NewDeck(actions[p.Character])
+		p.Deck = actions[p.Character]
 	}
 
 	// Step 19

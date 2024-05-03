@@ -6,8 +6,8 @@ func eventFailure(event *EventCard) {
 			a.IsDamaged = true
 		}
 	}
-	game.Events.Return(event)
-	game.Events.Shuffle()
+	events.Return(event)
+	events.Shuffle()
 }
 
 func ResolveEvent(event *EventCard) {

@@ -1,7 +1,7 @@
 package main
 
-var actions = map[string]Cards{
-	captain: {
+var actions = map[string]*Deck{
+	captain: newDeck(Cards{
 		NewActionCard(0, action_rest),
 		NewActionCard(0, action_order),
 		NewActionCard(0, action_demolition),
@@ -12,8 +12,8 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_basic_repairs),
 		NewActionCard(0, action_interruption),
 		NewActionCard(0, action_register),
-	},
-	explorer: {
+	}),
+	explorer: newDeck(Cards{
 		NewActionCard(0, action_scavenger),
 		NewActionCard(0, action_rest),
 		NewActionCard(0, action_scout),
@@ -24,8 +24,8 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_basic_repairs),
 		NewActionCard(0, action_adrenaline),
 		NewActionCard(0, action_interruption),
-	},
-	scientist: {
+	}),
+	scientist: newDeck(Cards{
 		NewActionCard(0, action_register),
 		NewActionCard(0, action_intranet),
 		NewActionCard(0, action_computer_skills),
@@ -36,8 +36,8 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_rest),
 		NewActionCard(0, action_interruption),
 		NewActionCard(0, action_register),
-	},
-	soldier: {
+	}),
+	soldier: newDeck(Cards{
 		NewActionCard(0, action_basic_repairs),
 		NewActionCard(0, action_automatic_fire),
 		NewActionCard(0, action_covering_fire),
@@ -48,8 +48,8 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_interruption),
 		NewActionCard(0, action_demolition),
 		NewActionCard(0, action_register),
-	},
-	mechanic: {
+	}),
+	mechanic: newDeck(Cards{
 		NewActionCard(0, action_interruption),
 		NewActionCard(0, action_register),
 		NewActionCard(0, action_computer_skills),
@@ -60,8 +60,8 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_fireworks),
 		NewActionCard(0, action_service_corridors),
 		NewActionCard(0, action_rest),
-	},
-	pilot: {
+	}),
+	pilot: newDeck(Cards{
 		NewActionCard(0, action_interruption),
 		NewActionCard(0, action_rest),
 		NewActionCard(0, action_computer_skills),
@@ -72,7 +72,7 @@ var actions = map[string]Cards{
 		NewActionCard(0, action_piloting),
 		NewActionCard(0, action_repair),
 		NewActionCard(0, action_register),
-	},
+	}),
 }
 
 var areas Areas = Areas{
@@ -102,7 +102,7 @@ var areas Areas = Areas{
 	newArea(S02, room_service2),
 }
 
-var attacks = Cards{
+var attacks = newDeck(Cards{
 	newAttack(6, attack_bite, adult, breeder, queen),
 	newAttack(4, attack_bite, adult, breeder, queen),
 	newAttack(4, attack_bite, adult, breeder, queen),
@@ -123,18 +123,18 @@ var attacks = Cards{
 	newAttack(5, attack_claws, adult, breeder, queen),
 	newAttack(0, attack_claws, adult, breeder, queen),
 	newAttack(5, attack_mucosity, crawler, adult, breeder, queen),
-}
+})
 
-var characters = Cards{
+var characters = newDeck(Cards{
 	newCard(captain),
 	newCard(explorer),
 	newCard(mechanic),
 	newCard(pilot),
 	newCard(scientist),
 	newCard(soldier),
-}
+})
 
-var contamination = Cards{
+var contamination = newDeck(Cards{
 	newContamination(true),
 	newContamination(true),
 	newContamination(true),
@@ -162,9 +162,9 @@ var contamination = Cards{
 	newContamination(false),
 	newContamination(false),
 	newContamination(false),
-}
+})
 
-var coordinates = Cards{
+var coordinates = newDeck(Cards{
 	newCoordinates("CBDA"),
 	newCoordinates("ABCD"),
 	newCoordinates("ACDB"),
@@ -173,7 +173,7 @@ var coordinates = Cards{
 	newCoordinates("BDCA"),
 	newCoordinates("CABD"),
 	newCoordinates("BDAC"),
-}
+})
 
 var gates = Gates{
 	{A01, A02, []int{3}},
@@ -214,7 +214,7 @@ var gates = Gates{
 	{A21, S01, []int{2, 3}},
 }
 
-var events = Cards{
+var events = newDeck(Cards{
 	newEvent(1, "Fuga de refrigerante", adult, breeder, queen),
 	newEvent(3, "Eclosion", adult, breeder),
 	newEvent(4, "Ruido en los pasillos de servicio", adult, breeder),
@@ -235,9 +235,9 @@ var events = Cards{
 	newEvent(4, "cortocircuito", adult, breeder, queen),
 	newEvent(2, "caceria", crawler, breeder, queen),
 	newEvent(3, "Eyeccion de capsula de evacuacion", adult, breeder, queen),
-}
+})
 
-var explorationTokens = Cards{
+var explorationTokens = newDeck(Cards{
 	newExplorationToken(1, ev_damaged),
 	newExplorationToken(1, ev_damaged),
 	newExplorationToken(2, ev_damaged),
@@ -258,7 +258,7 @@ var explorationTokens = Cards{
 	newExplorationToken(4, ev_mucus),
 	newExplorationToken(1, ev_silence),
 	newExplorationToken(1, ev_silence),
-}
+})
 
 var goalsCoop = Cards{
 	newGoal(0, "The signal"),                   // Send the signal
@@ -295,7 +295,7 @@ var goalsPriv = Cards{
 	newGoal(5, "The ultimate epiphany"),      // Player 5 must not survive OR you are the only one surviving
 }
 
-var rooms1 = Cards{
+var rooms1 = newDeck(Cards{
 	newRoom(room_storage, red, false),
 	newRoom("Fire control system", yellow, true),
 	newRoom("Emergency room", green, false),
@@ -307,9 +307,9 @@ var rooms1 = Cards{
 	newRoom("Armory", red, false),
 	newRoom("Evacuation section A", all, false),
 	newRoom("Evacuation section B", all, false),
-}
+})
 
-var rooms2 = Cards{
+var rooms2 = newDeck(Cards{
 	newRoom("Command deck", blank, true),
 	newRoom("Engine Management", yellow, true),
 	newRoom("Showers", all, false),
@@ -319,9 +319,9 @@ var rooms2 = Cards{
 	newRoom("Cabins", all, false),
 	newRoom("Mocosous room", blank, false),
 	newRoom("Vigilance", green, true),
-}
+})
 
-var weaknesses = Cards{
+var weaknesses = newDeck(Cards{
 	newWeakness(weakness_fighting),
 	newWeakness(weakness_reaction),
 	newWeakness(weakness_vitalpoints),
@@ -330,9 +330,9 @@ var weaknesses = Cards{
 	newWeakness(weakness_energy),
 	newWeakness(weakness_movement),
 	newWeakness(weakness_endangered),
-}
+})
 
-var wounds = Cards{
+var wounds = newDeck(Cards{
 	newWound(wound_leg),
 	newWound(wound_leg),
 	newWound(wound_leg),
@@ -349,4 +349,4 @@ var wounds = Cards{
 	newWound(wound_hemorrhage),
 	newWound(wound_hemorrhage),
 	newWound(wound_hemorrhage),
-}
+})

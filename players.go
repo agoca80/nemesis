@@ -79,7 +79,7 @@ func (p *Player) HasPassed() bool {
 
 func (p *Player) SuffersContamination() {
 	Show(p, "suffers contamination!")
-	p.Discard(game.Contamination.Draw())
+	p.Discard(contamination.Draw())
 }
 
 func (p *Player) SuffersLightWound() {
@@ -103,7 +103,7 @@ func (p *Player) SufferSeriousWound() {
 		return
 	}
 
-	card := game.Wounds.Draw().(*SeriousWound)
+	card := wounds.Draw().(*SeriousWound)
 	p.SeriousWounds = append(p.SeriousWounds, card)
 	Show(p, "suffers", card.name, "!")
 }

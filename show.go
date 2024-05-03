@@ -54,18 +54,13 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	neighbors := []string{}
-	for _, n := range a.Neighbors() {
-		neighbors = append(neighbors, n.String())
-	}
-
 	return fmt.Sprintf("- %v%v %s,%d %-21s\t%-9s \t> %v \t| %v\n",
 		Damage(a.IsDamaged),
 		Fire(a.IsInFire),
 		a,
 		a.Items,
-		description,
 		a.ExplorationToken,
+		description,
 		a.Corridors.Show(a),
 		strings.Join(actors, " "),
 	)
