@@ -108,7 +108,7 @@ const (
 
 // Door states
 const (
-	door_open   = "_"
+	door_open   = "O"
 	door_closed = "|"
 	door_broken = "X"
 )

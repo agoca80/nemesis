@@ -17,7 +17,7 @@ func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	return
 }
 
-func (game *Game) ResolveMove(player *Player, corridor *Gate) {
+func (player *Player) ResolveMove(corridor *Gate) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
 		player.Area.Intruders.Attack(player)
@@ -39,7 +39,7 @@ func (game *Game) ResolveMove(player *Player, corridor *Gate) {
 	}
 
 	if noiseRoll && event != ev_danger && event != ev_silence {
-		game.ResolveNoise(player)
+		player.ResolveNoise()
 	}
 }
 
@@ -48,24 +48,9 @@ func (a ActionBasic) Resolve(data map[string]interface{}) {
 	switch string(a) {
 	case basic_move:
 		corridor := data["corridor"].(*Gate)
-		player.ResolveMove(player, corridor)
+		player.ResolveMove(corridor)
 	default:
 		Pending(a, "not implemented")
-	}
-}
-
-func (p *Player) GetAction() (actionData map[string]interface{}) {
-	if p.HandSize() < 1 {
-		return
-	}
-
-	return map[string]interface{}{
-		"player":   p,
-		"action":   ActionBasic(basic_move),
-		"corridor": p.chooseCorridor(),
-		"cost": Cards{
-			p.Hand[0],
-		},
 	}
 }
 
@@ -78,8 +63,8 @@ func (p *Player) Pay(card Card) {
 	p.Discard(card)
 }
 
-func (game *Game) GetAction(player *Player) {
-	actionData := player.GetAction()
+func (g *Game) AskAction(player *Player) {
+	actionData := player.NewAction()
 	if actionData == nil {
 		player.Passes()
 		return

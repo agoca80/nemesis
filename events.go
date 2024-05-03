@@ -1,18 +1,18 @@
 package main
 
-func (g *Game) eventFailure(event *EventCard) {
-	for _, a := range g.Area[A01:A21] {
+func eventFailure(event *EventCard) {
+	for _, a := range game.Area[A01:A21] {
 		if a.IsExplored() {
 			a.IsDamaged = true
 		}
 	}
-	g.Events.Return(event)
-	g.Events.Shuffle()
+	game.Events.Return(event)
+	game.Events.Shuffle()
 }
 
-func (g *Game) ResolveEvent(event *EventCard) {
+func ResolveEvent(event *EventCard) {
 	var effects = map[string]func(*EventCard){
-		event_failure: g.eventFailure,
+		event_failure: eventFailure,
 	}
 
 	if effect, ok := effects[event.name]; ok {
@@ -22,7 +22,7 @@ func (g *Game) ResolveEvent(event *EventCard) {
 		Show("PENDING effect for", event.name)
 	}
 
-	if g.Destroyed() {
+	if game.Destroyed() {
 		Pending("The ship has been destroyed!!!")
 	}
 }

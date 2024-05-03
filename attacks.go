@@ -12,7 +12,7 @@ const (
 	attack_transformation = "transformation"
 )
 
-func (g *Game) attackByte(i *Intruder, p *Player) {
+func attackByte(i *Intruder, p *Player) {
 	Show(i, "bytes", p, "!")
 	if len(p.SeriousWounds) == 2 {
 		p.Dies()
@@ -21,16 +21,16 @@ func (g *Game) attackByte(i *Intruder, p *Player) {
 	}
 }
 
-func (g *Game) attackClaws(i *Intruder, p *Player) {
+func attackClaws(i *Intruder, p *Player) {
 	Show(i, "attacks", p, "with its claws!")
-	p.Discard(g.Contamination.Draw())
+	p.Discard(game.Contamination.Draw())
 	p.SuffersLightWound()
 	if p.Alive() {
 		p.SuffersLightWound()
 	}
 }
 
-func (g *Game) attackFrenzy(i *Intruder, p *Player) {
+func attackFrenzy(i *Intruder, p *Player) {
 	Show(i, "in area", i.Area, "goes into a frenzy!!!")
 	for _, player := range i.Area.Players.Alive() {
 		if len(player.SeriousWounds) < 2 {
@@ -41,29 +41,29 @@ func (g *Game) attackFrenzy(i *Intruder, p *Player) {
 	}
 }
 
-func (g *Game) attackMucosity(i *Intruder, p *Player) {
+func attackMucosity(i *Intruder, p *Player) {
 	Show(i, "covers", p, " in mucus!")
-	p.Discard(g.Contamination.Draw())
+	p.Discard(game.Contamination.Draw())
 	p.IsDrenched = true
 }
 
-func (g *Game) attackRecall(i *Intruder, p *Player) {
-	token := g.FetchToken()
+func attackRecall(i *Intruder, p *Player) {
+	token := game.FetchToken()
 	if token.Kind == token_blank {
 		Show(i, "in area calls for friends, but it has no effect.")
 	} else {
 		Show(i, "in area calls for friends!")
-		g.NewIntruder(token, p.Area)
+		NewIntruder(token, p.Area)
 	}
 }
 
-func (g *Game) attackScratch(i *Intruder, p *Player) {
+func attackScratch(i *Intruder, p *Player) {
 	Show(i, "scratches", p, "!")
-	p.Discard(g.Contamination.Draw())
+	p.Discard(game.Contamination.Draw())
 	p.SuffersLightWound()
 }
 
-func (g *Game) attackTail(i *Intruder, p *Player) {
+func attackTail(i *Intruder, p *Player) {
 	Show(i, "atacks", p, "with its tail!")
 	if len(p.SeriousWounds) == 1 {
 		p.Dies()
@@ -72,9 +72,9 @@ func (g *Game) attackTail(i *Intruder, p *Player) {
 	}
 }
 
-func (g *Game) attackTransformation(i *Intruder, p *Player) {
+func attackTransformation(i *Intruder, p *Player) {
 	breeders := 0
-	for _, intruder := range g.Intruders {
+	for _, intruder := range game.Intruders {
 		if intruder.Kind == breeder {
 			breeders++
 		}
@@ -86,23 +86,23 @@ func (g *Game) attackTransformation(i *Intruder, p *Player) {
 	}
 
 	Show(i, "convulses and transforms into an effing breeder!")
-	g.RemIntruder(i)
-	transformed := g.SpawnIntruder(breeder, p.Area)
+	RemIntruder(i)
+	transformed := SpawnIntruder(breeder, p.Area)
 	if p.HandSize() == 0 {
-		g.ResolveIntruderAttack(transformed, p)
+		ResolveIntruderAttack(transformed, p)
 	}
 }
 
-func (g *Game) ResolveIntruderAttack(i *Intruder, p *Player) {
+func ResolveIntruderAttack(i *Intruder, p *Player) {
 	effect := map[string]func(*Intruder, *Player){
-		attack_claws:          g.attackClaws,
-		attack_frenzy:         g.attackFrenzy,
-		attack_tail:           g.attackTail,
-		attack_transformation: g.attackTransformation,
-		attack_bite:           g.attackByte,
-		attack_mucosity:       g.attackMucosity,
-		attack_recall:         g.attackRecall,
-		attack_scratch:        g.attackScratch,
+		attack_claws:          attackClaws,
+		attack_frenzy:         attackFrenzy,
+		attack_tail:           attackTail,
+		attack_transformation: attackTransformation,
+		attack_bite:           attackByte,
+		attack_mucosity:       attackMucosity,
+		attack_recall:         attackRecall,
+		attack_scratch:        attackScratch,
 	}
 
 	if !p.Alive() {
@@ -114,11 +114,11 @@ func (g *Game) ResolveIntruderAttack(i *Intruder, p *Player) {
 		Show(i, "infestes", p, "!")
 		p.IsInfested = true
 		p.SuffersContamination()
-		g.RemIntruder(i)
+		RemIntruder(i)
 		return
 	}
 
-	attack := i.Attacks.Next().(*AttackCard)
+	attack := game.Attacks.Next().(*AttackCard)
 	if !attack.Includes(i.Kind) {
 		Show(i, "attacks", p, "but fails!")
 		return

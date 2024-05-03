@@ -2,11 +2,11 @@ package main
 
 import (
 	"slices"
+	"strconv"
 )
 
 type Player struct {
 	*Area
-	*Game
 	*Deck
 	*HelpCard
 
@@ -28,11 +28,10 @@ type Players []*Player
 
 var playerId = 0
 
-func NewPlayer(game *Game) *Player {
+func NewPlayer() *Player {
 	playerId++
 	return &Player{
 		Id:            playerId,
-		Game:          game,
 		Goals:         Cards{},
 		Hand:          Cards{},
 		SeriousWounds: SeriousWounds{},
@@ -80,7 +79,7 @@ func (p *Player) HasPassed() bool {
 
 func (p *Player) SuffersContamination() {
 	Show(p, "suffers contamination!")
-	p.Discard(p.Contamination.Draw())
+	p.Discard(game.Contamination.Draw())
 }
 
 func (p *Player) SuffersLightWound() {
@@ -104,7 +103,7 @@ func (p *Player) SufferSeriousWound() {
 		return
 	}
 
-	card := p.Wounds.Draw().(*SeriousWound)
+	card := game.Wounds.Draw().(*SeriousWound)
 	p.SeriousWounds = append(p.SeriousWounds, card)
 	Show(p, "suffers", card.name, "!")
 }
@@ -194,4 +193,37 @@ func (p Players) GoingOn() (players Players) {
 		}
 	}
 	return
+}
+
+func (p *Player) ResolveNoise() {
+	encounter := false
+	result := p.RollNoise()
+	if result == ev_silence && p.IsDrenched {
+		Show(p, "was silent but is drenched in mucus")
+		result = ev_danger
+	}
+
+	switch result {
+	case ev_silence:
+		Show(p, "makes no noise")
+	case ev_danger:
+		Show(p.Area, "is in danger!")
+		p.Danger()
+	default:
+		n, _ := strconv.Atoi(result)
+		corridor := p.Corridor(n)
+		Show(p, "makes noise in corridor", corridor.Numbers)
+		if corridor.Noise {
+			for _, c := range p.Area.Gates {
+				c.Noise = false
+			}
+			encounter = true
+		} else {
+			corridor.Noise = true
+		}
+	}
+
+	if encounter {
+		game.ResolveEncounter(p)
+	}
 }

@@ -10,13 +10,17 @@ const (
 	wait         = true
 )
 
+var (
+	game *Game
+)
+
 func main() {
 	cooperative := false
 	players := 1
 
-	g := newGame(players)
-	g.Prepare(cooperative)
-	g.Run()
+	game = newGame(players)
+	game.Prepare(cooperative)
+	game.Run()
 	Show("Game over!!!")
 }
 

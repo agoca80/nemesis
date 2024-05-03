@@ -48,6 +48,15 @@ func (a *Area) IsReachable() bool {
 	return A00 < a.Id && a.Id < S01
 }
 
+func (a *Area) Neighbors() (neighbors Areas) {
+	neighbors = Areas{}
+	for _, gate := range a.Gates {
+		neighbors = append(neighbors, gate.Area)
+	}
+
+	return neighbors
+}
+
 func (a *Area) RemIntruder(i *Intruder) {
 	index := slices.Index(a.Intruders, i)
 	a.Intruders = slices.Delete(a.Intruders, index, index+1)
@@ -59,7 +68,7 @@ func (a *Area) RemPlayer(p *Player) {
 }
 
 func (a *Area) String() string {
-	return fmt.Sprintf("%03d", a.Id)
+	return fmt.Sprintf("%02d", a.Id)
 }
 
 func (a *Area) Corridor(n int) *Gate {
@@ -96,8 +105,8 @@ func NewBoard() (b *Board) {
 		}
 	}
 
-	for _, tunnel := range tunnels {
-		connectAreas(tunnel)
+	for _, corridor := range corridors {
+		connectAreas(corridor)
 	}
 
 	return
@@ -145,15 +154,6 @@ func newCorridor(areaX, areaY int, numbers ...int) *Corridor {
 	}
 }
 
-func (c *Corridor) String() string {
-	return fmt.Sprintf(
-		"%v%v%v",
-		Noise(c.Noise),
-		c.Numbers,
-		c.Door,
-	)
-}
-
 type Gate struct {
 	*Area
 	*Corridor
@@ -168,14 +168,15 @@ func newGate(a *Area, t *Corridor) *Gate {
 	}
 }
 
-func (g *Gate) String() string {
-	return g.Corridor.String()
-}
-
 func (g Gates) String() (result string) {
-	gates := []string{}
+	doors := ""
+	noise := ""
+	numbers := []string{}
 	for _, gate := range g {
-		gates = append(gates, gate.Numbers.String())
+		doors += gate.Corridor.Door
+		noise += Noise(gate.Corridor.Noise).String()
+		numbers = append(numbers, gate.Corridor.Numbers.String())
 	}
-	return strings.Join(gates, "\t")
+	result = fmt.Sprintf("%v\t%v\t%v", noise, doors, strings.Join(numbers, " "))
+	return
 }

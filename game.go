@@ -3,7 +3,6 @@ package main
 import (
 	"math/rand"
 	"slices"
-	"strconv"
 	"strings"
 )
 
@@ -38,8 +37,8 @@ type Game struct {
 	Weakness            []*Weakness
 }
 
-func newGame(players int) (g *Game) {
-	g = &Game{
+func newGame(players int) (game *Game) {
+	game = &Game{
 		Board:   NewBoard(),
 		Players: Players{},
 
@@ -59,7 +58,7 @@ func newGame(players int) (g *Game) {
 	}
 
 	for range players {
-		g.Players = append(g.Players, NewPlayer(g))
+		game.Players = append(game.Players, NewPlayer())
 	}
 
 	return
@@ -73,10 +72,10 @@ func (game *Game) ResolveEncounter(p *Player) {
 		return
 	}
 
-	intruder := game.NewIntruder(token, p.Area)
+	intruder := NewIntruder(token, p.Area)
 	if p.IsSurprised(token) {
 		Show(p, "is surprised by", intruder)
-		game.ResolveIntruderAttack(intruder, p)
+		ResolveIntruderAttack(intruder, p)
 	}
 }
 
@@ -120,52 +119,21 @@ func (game *Game) ResolveExploration(player *Player, corridor *Gate) (event stri
 	return event
 }
 
-func (g *Game) ResolveNoise(p *Player) {
-	encounter := false
-	result := p.RollNoise()
-	if result == ev_silence && p.IsDrenched {
-		Show(p, "was silent but is drenched in mucus")
-		result = ev_danger
-	}
-
-	switch result {
-	case ev_silence:
-		Show(p, "makes no noise")
-	case ev_danger:
-		Show(p.Area, "is in danger!")
-		p.Danger()
-	default:
-		n, _ := strconv.Atoi(result)
-		corridor := p.Corridor(n)
-		Show(p, "makes noise in corridor", corridor.Numbers)
-		if corridor.Noise {
-			for _, c := range p.Area.Gates {
-				c.Noise = false
-			}
-			encounter = true
-		} else {
-			corridor.Noise = true
-		}
-	}
-
-	if encounter {
-		g.ResolveEncounter(p)
-	}
-}
-
 func Roll(dice []string) string {
 	face := rand.Intn(len(dice))
 	return dice[face]
 }
 
-func (g *Game) RemIntruder(i *Intruder) {
-	index, a := slices.Index(g.Intruders, i), i.Area
-	g.Intruders = slices.Delete(g.Intruders, index, index+1)
+func RemIntruder(i *Intruder) {
+	index, a := slices.Index(game.Intruders, i), i.Area
+	game.Intruders = slices.Delete(game.Intruders, index, index+1)
 	a.RemIntruder(i)
 }
 
-func (g *Game) FireDamage(i *Intruder, damage int) {
-	for _, w := range g.Weakness {
+func (i *Intruder) FireDamage(damage int) {
+	Show(i, "in", i.Area, "is damaged by fire!")
+
+	for _, w := range game.Weakness {
 		if w.Revealed && w.name == weakness_fire {
 			damage++
 		}
@@ -174,33 +142,29 @@ func (g *Game) FireDamage(i *Intruder, damage int) {
 	i.Suffers(damage)
 }
 
-func (g *Game) gameOver() bool {
+func (g *Game) Over() bool {
 	return g.Destroyed() || len(g.Players.Alive()) == 0 || g.hyperdriveCountdown == 0
-}
-
-func (g *Game) GoingOn() bool {
-	return !g.gameOver()
 }
 
 func (g *Game) Run() {
 	var step = map[Step]func() Step{
 		step_draw:      g.draw,
 		step_token:     g.token,
-		step_turn:      g.turn,
+		step_turn:      g.stepTurn,
 		step_counters:  g.counters,
-		step_attack:    g.attacks,
+		step_attack:    g.stepAttacks,
 		step_fire:      g.fireDamage,
 		step_event:     g.event,
 		step_evolution: g.evolution,
 	}
 
 	s := Step(step_draw)
-	for g.GoingOn() {
+	for !g.Over() {
 		Show(strings.Repeat("-", 80))
 		Show(strings.ToUpper(string(s)))
 		s = step[s]()
 	}
 
-	g.Players.Show()
+	game.Players.Show()
 	Show("Game over!!!")
 }

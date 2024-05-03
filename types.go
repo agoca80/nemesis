@@ -34,14 +34,14 @@ type Step string
 
 func (d Damage) String() string {
 	if d {
-		return "D"
+		return "X"
 	}
 	return " "
 }
 
 func (f Fire) String() string {
 	if f {
-		return "F"
+		return "X"
 	}
 	return " "
 }
@@ -50,5 +50,5 @@ func (n Noise) String() string {
 	if n {
 		return "!"
 	}
-	return " "
+	return "."
 }

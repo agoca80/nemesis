@@ -12,24 +12,6 @@ func Show(args ...interface{}) {
 	fmt.Println(args...)
 }
 
-func (c *Gate) Show() string {
-	return fmt.Sprintf(
-		"%v%v%v%v",
-		Noise(c.Noise),
-		c.Numbers,
-		c.Door,
-		c.Area,
-	)
-}
-
-func (c *Gates) Show() string {
-	corridors := []string{}
-	for _, c := range *c {
-		corridors = append(corridors, c.Show())
-	}
-	return strings.Join(corridors, " ")
-}
-
 func (a *Area) Show() string {
 	actors := []string{}
 	for _, p := range a.Players {
@@ -46,11 +28,17 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	return fmt.Sprintf("- %v%v %s,%d %-21s\t %s\t| %v\t| %v\n",
+	neighbors := []string{}
+	for _, n := range a.Neighbors() {
+		neighbors = append(neighbors, n.String())
+	}
+
+	return fmt.Sprintf("- %v%v %s,%d -> %s\t%-21s\t %s\t| %v\t| %v\n",
 		Damage(a.IsDamaged),
 		Fire(a.IsInFire),
 		a,
 		a.Items,
+		strings.Join(neighbors, ","),
 		description,
 		a.ExplorationToken,
 		a.Gates,
@@ -97,9 +85,9 @@ func (b *Board) Show() {
 	Show()
 }
 
-func (g *Game) Show() {
-	g.Players.Show()
-	g.Board.Show()
+func (game *Game) Show() {
+	game.Players.Show()
+	game.Board.Show()
 }
 
 func Wait() {

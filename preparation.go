@@ -4,73 +4,73 @@ import (
 	"math/rand"
 )
 
-func (g *Game) Prepare(coop bool) {
+func (game *Game) Prepare(coop bool) {
 	// Prepare 1
-	g.Board = NewBoard()
+	game.Board = NewBoard()
 
 	// Prepare 2
-	for _, a := range g.Area {
+	for _, a := range game.Area {
 		if a.Class == room_2 {
-			a.Room = g.Rooms2.Draw().(*Room)
+			a.Room = game.Rooms2.Draw().(*Room)
 		}
 	}
 
 	// Prepare 3
-	for _, a := range g.Area {
+	for _, a := range game.Area {
 		if a.Class == room_1 {
-			a.Room = g.Rooms1.Draw().(*Room)
+			a.Room = game.Rooms1.Draw().(*Room)
 		}
 	}
 
 	// Prepare 4
-	for _, a := range g.Area {
+	for _, a := range game.Area {
 		if a.Class == room_1 || a.Class == room_2 {
-			a.ExplorationToken = g.ExplorationTokens.Draw().(*ExplorationToken)
+			a.ExplorationToken = game.ExplorationTokens.Draw().(*ExplorationToken)
 		}
 	}
 
 	// Initialize coordinates card
-	g.CoordinateCard = g.Coordinates.Draw().(*Coordinates)
+	game.CoordinateCard = game.Coordinates.Draw().(*Coordinates)
 
 	// Initialize destination
-	g.Destination = "B"
+	game.Destination = "B"
 
 	// Initialize escape pods
 	// order := rand.Perm(2)
 	// alternate := []int{0, 1, order[0], order[1]}
-	// numOfEscapePods := []int{2, 2, 3, 3, 4}[len(g.Players)-1]
+	// numOfEscapePods := []int{2, 2, 3, 3, 4}[len(game.Players)-1]
 	// for n := range numOfEscapePods {
 	// 	search := func(c Card) bool {
 	// 		ep := c.(*EscapePod)
 	// 		return ep.number == n
 	// 	}
-	// 	g.EscapePods[alternate[n]] = append(g.EscapePods[alternate[n]], g.Take(escapePods, search))
+	// 	game.EscapePods[alternate[n]] = append(game.EscapePods[alternate[n]], game.Take(escapePods, search))
 	// }
 
 	// initialize engines states
-	g.EngineStatus = [3]bool{
+	game.EngineStatus = [3]bool{
 		rand.Intn(2) == 0,
 		rand.Intn(2) == 0,
 		rand.Intn(2) == 0,
 	}
 
 	// Initialize intruder board
-	g.Eggs = 5
-	g.Weakness = []*Weakness{
-		g.Weaknesses.Draw().(*Weakness),
-		g.Weaknesses.Draw().(*Weakness),
-		g.Weaknesses.Draw().(*Weakness),
+	game.Eggs = 5
+	game.Weakness = []*Weakness{
+		game.Weaknesses.Draw().(*Weakness),
+		game.Weaknesses.Draw().(*Weakness),
+		game.Weaknesses.Draw().(*Weakness),
 	}
 
 	// Initialize intruder bag
-	g.IntruderBag = NewIntruderBag(len(g.Players))
+	game.IntruderBag = NewIntruderBag(len(game.Players))
 
 	// Initialize hyperdrive countdown
-	g.hyperdriveCountdown = 15
+	game.hyperdriveCountdown = 15
 
 	// Crew preparation step 18 A,B,C
-	for _, p := range g.Players {
-		p.Area, g.Area[A11].Players = g.Area[A11], append(g.Area[A11].Players, p)
+	for _, p := range game.Players {
+		p.Area, game.Area[A11].Players = game.Area[A11], append(game.Area[A11].Players, p)
 	}
 
 	// Crew preparation step 14
@@ -81,37 +81,37 @@ func (g *Game) Prepare(coop bool) {
 		NewHelpCard(4),
 		NewHelpCard(5),
 	}
-	helpDeck := NewDeck(helpCards[:len(g.Players)])
-	for _, p := range g.Players {
+	helpDeck := NewDeck(helpCards[:len(game.Players)])
+	for _, p := range game.Players {
 		p.HelpCard = helpDeck.Draw().(*HelpCard)
 	}
 
 	// Crew preparation step 16
-	for _, p := range g.Players {
+	for _, p := range game.Players {
 		if coop {
-			p.Goals = append(p.Goals, g.GoalsCoop.Draw())
+			p.Goals = append(p.Goals, game.GoalsCoop.Draw())
 		} else {
-			p.Goals = append(p.Goals, g.GoalsCorp.Draw(), g.GoalsPriv.Draw())
+			p.Goals = append(p.Goals, game.GoalsCorp.Draw(), game.GoalsPriv.Draw())
 		}
 	}
 
 	// Crew preparation step 17
-	for _, p := range g.Players {
-		p.chooseCharacter(g.Characters)
+	for _, p := range game.Players {
+		p.chooseCharacter(game.Characters)
 	}
 
 	// Crew preparation step 18
-	for _, p := range g.Players {
+	for _, p := range game.Players {
 		p.Deck = NewDeck(actions[p.Character])
 	}
 
 	// Step 19
-	for _, p := range g.Players {
+	for _, p := range game.Players {
 		if p.Number == 1 {
 			p.Jonesy = true
 		}
 	}
 
 	// Preparation 20
-	// hybernarium.Objects = append(hybernarium.Objects, g.BlueCorpseToken)
+	// hybernarium.Objects = append(hybernarium.Objects, game.BlueCorpseToken)
 }

@@ -24,3 +24,18 @@ func (p *Player) chooseCorridor() *Gate {
 	}
 	return options[rand.Intn(len(options))]
 }
+
+func (p *Player) NewAction() (actionData map[string]interface{}) {
+	if p.HandSize() < 1 {
+		return
+	}
+
+	return map[string]interface{}{
+		"player":   p,
+		"action":   ActionBasic(basic_move),
+		"corridor": p.chooseCorridor(),
+		"cost": Cards{
+			p.Hand[0],
+		},
+	}
+}

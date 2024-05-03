@@ -3,19 +3,19 @@ package main
 import "slices"
 
 func (g *Game) draw() Step {
-	for _, p := range g.Players {
+	for _, p := range game.Players {
 		p.DrawActions()
 	}
 	return step_token
 }
 
 func (g *Game) token() Step {
-	if g.hyperdriveCountdown < 15 {
-		g.PassJonesy()
+	if game.hyperdriveCountdown < 15 {
+		game.PassJonesy()
 	}
 
 	var first int
-	for i, p := range g.Players {
+	for i, p := range game.Players {
 		if p.Jonesy {
 			first = i
 			break
@@ -23,30 +23,30 @@ func (g *Game) token() Step {
 	}
 
 	players := Players{}
-	for i := range g.Players {
-		next := (first + i) % len(g.Players)
-		players = append(players, g.Players[next])
+	for i := range game.Players {
+		next := (first + i) % len(game.Players)
+		players = append(players, game.Players[next])
 	}
-	g.Players = players
+	game.Players = players
 	players.Alive().Show()
 	return step_turn
 }
 
-func (game *Game) turn() Step {
+func (g *Game) stepTurn() Step {
 	round := func(players Players) (goingOn Players) {
 		for _, player := range players {
 			if player.GoingOn() {
-				game.GetAction(player)
+				g.AskAction(player)
 			}
-			if game.gameOver() {
+			if game.Over() {
 				return
 			}
 			if player.GoingOn() {
-				game.GetAction(player)
+				g.AskAction(player)
 			}
 		}
 
-		if game.gameOver() {
+		if game.Over() {
 			return
 		}
 
@@ -59,7 +59,7 @@ func (game *Game) turn() Step {
 	}
 
 	goingOn := players.GoingOn()
-	for game.GoingOn() && len(goingOn) > 0 {
+	for !game.Over() && len(goingOn) > 0 {
 		goingOn = round(goingOn)
 	}
 
@@ -67,18 +67,18 @@ func (game *Game) turn() Step {
 }
 
 func (g *Game) counters() Step {
-	g.hyperdriveCountdown--
-	Show("Hyperdrive countdown:", g.hyperdriveCountdown)
+	game.hyperdriveCountdown--
+	Show("Hyperdrive countdown:", game.hyperdriveCountdown)
 
-	if g.hyperdriveCountdown == 8 {
+	if game.hyperdriveCountdown == 8 {
 		Pending("The hibernatorium chambers are open again!")
 	}
 
 	return step_attack
 }
 
-func (g *Game) attacks() Step {
-	for _, i := range g.Intruders {
+func (g *Game) stepAttacks() Step {
+	for _, i := range game.Intruders {
 		if i.IsInCombat() {
 			i.Attack()
 		}
@@ -88,29 +88,28 @@ func (g *Game) attacks() Step {
 }
 
 func (g *Game) fireDamage() Step {
-	for _, a := range g.Area {
+	for _, a := range game.Area {
 		if !a.IsInFire {
 			continue
 		}
 
 		for _, intruder := range a.Intruders {
-			Show(intruder, "in", a, "is damaged by fire!")
-			g.FireDamage(intruder, 1)
+			intruder.FireDamage(1)
 		}
 	}
 	return step_event
 }
 
 func (g *Game) event() Step {
-	event := g.Events.Draw().(*EventCard)
+	event := game.Events.Draw().(*EventCard)
 	Show("Event card is", event.name)
-	for _, i := range g.Intruders {
+	for _, i := range game.Intruders {
 		if slices.Contains(event.Symbols, i.Kind) && !i.IsInCombat() {
 			i.Moves(event.Corridor)
 		}
 	}
 
-	g.ResolveEvent(event)
+	ResolveEvent(event)
 
 	return step_evolution
 }
@@ -118,33 +117,33 @@ func (g *Game) event() Step {
 func (g *Game) evolution() Step {
 	rollNoise := func() {
 		Show("All players roll noise in turn order")
-		for _, p := range g.Players.Alive() {
+		for _, p := range game.Players.Alive() {
 			if !p.IsInCombat() {
 				p.RollNoise()
 			}
 		}
 	}
-	token := g.FetchToken()
+	token := game.FetchToken()
 	kind := token.Kind
 	switch kind {
 	case token_blank:
 		Show("More adults are lurking on the ship")
-		g.Return(token_adult)
+		game.Return(token_adult)
 	case token_larva:
 		Show("A larva grows into an adult")
-		g.Retire(token)
-		g.Return(token_adult)
+		game.Retire(token)
+		game.Return(token_adult)
 	case token_crawler:
 		Show("A crawler grows into a breeder")
-		g.Retire(token)
-		g.Return(token_breeder)
+		game.Retire(token)
+		game.Return(token_breeder)
 	case token_adult:
 		rollNoise()
 	case token_breeder:
 		rollNoise()
 	case token_queen:
 		var nest *Area
-		for _, a := range g.Area {
+		for _, a := range game.Area {
 			if a.Name() == room_nest {
 				nest = a
 				break
@@ -153,10 +152,10 @@ func (g *Game) evolution() Step {
 
 		if nest == nil || len(nest.Players) == 0 {
 			Show("The queen lays another egg!")
-			g.Eggs++
+			game.Eggs++
 		} else {
 			Show("The queen show its might!")
-			intruder := g.NewIntruder(token, nest)
+			intruder := NewIntruder(token, nest)
 			intruder.Attack()
 		}
 	}

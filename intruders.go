@@ -8,7 +8,6 @@ const (
 
 type Intruder struct {
 	*Area
-	*Game
 
 	Kind   string
 	Wounds int
@@ -65,30 +64,29 @@ func (i *Intruder) Attack() {
 		}
 	}
 
-	i.ResolveIntruderAttack(i, player)
+	ResolveIntruderAttack(i, player)
 }
 
 func (i Intruders) Attack(p *Player) {
 	for _, intruder := range i {
-		intruder.ResolveIntruderAttack(intruder, p)
+		ResolveIntruderAttack(intruder, p)
 	}
 }
 
-func (g *Game) SpawnIntruder(kind string, area *Area) (i *Intruder) {
+func SpawnIntruder(kind string, area *Area) (i *Intruder) {
 	Show(kind, "appears in", area, "!")
 	i = &Intruder{
 		Area: area,
-		Game: g,
 		Kind: kind,
 	}
+	game.Intruders = append(game.Intruders, i)
 	area.Intruders = append(area.Intruders, i)
-	g.Intruders = append(g.Intruders, i)
 	return
 }
 
-func (g *Game) NewIntruder(token *IntruderToken, area *Area) (i *Intruder) {
-	i = g.SpawnIntruder(token.Kind, area)
-	g.Retire(token)
+func NewIntruder(token *IntruderToken, area *Area) (i *Intruder) {
+	i = SpawnIntruder(token.Kind, area)
+	game.Retire(token)
 	return
 }
 
