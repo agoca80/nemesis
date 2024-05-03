@@ -17,7 +17,7 @@ func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	return
 }
 
-func (player *Player) ResolveMove(corridor *Gate) {
+func (player *Player) ResolveMove(corridor *Corridor) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
 		player.Area.Intruders.Attack(player)
@@ -27,7 +27,8 @@ func (player *Player) ResolveMove(corridor *Gate) {
 		return
 	}
 
-	noiseRoll := player.MovesTo(corridor.Area)
+	destination := corridor.End(player.Area)
+	noiseRoll := player.MovesTo(destination)
 
 	var event string
 	if !player.Area.IsExplored() {
@@ -47,7 +48,7 @@ func (a ActionBasic) Resolve(data map[string]interface{}) {
 	player := data["player"].(*Player)
 	switch string(a) {
 	case basic_move:
-		corridor := data["corridor"].(*Gate)
+		corridor := data["corridor"].(*Corridor)
 		player.ResolveMove(corridor)
 	default:
 		Pending(a, "not implemented")

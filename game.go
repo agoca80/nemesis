@@ -39,7 +39,6 @@ type Game struct {
 
 func newGame(players int) (game *Game) {
 	game = &Game{
-		Board:   NewBoard(),
 		Players: Players{},
 
 		Attacks:           NewDeck(attacks),
@@ -79,7 +78,7 @@ func (game *Game) ResolveEncounter(p *Player) {
 	}
 }
 
-func (game *Game) ResolveExploration(player *Player, corridor *Gate) (event string) {
+func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event string) {
 	area := player.Area
 	token := area.ExplorationToken
 	area.ExplorationToken = nil

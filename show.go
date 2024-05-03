@@ -2,14 +2,40 @@ package main
 
 import (
 	"bufio"
+	"cmp"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"text/tabwriter"
 )
 
 func Show(args ...interface{}) {
 	fmt.Println(args...)
+}
+
+func (corridors Corridors) Show(from *Area) (result string) {
+	ends := []string{}
+	doors := ""
+	noise := ""
+	numbers := []string{}
+	slices.SortFunc(corridors, func(a, b *Corridor) int {
+		return cmp.Compare(a.Numbers.String(), b.Numbers.String())
+	})
+	for _, corridor := range corridors {
+		doors += corridor.Door
+		noise += Noise(corridor.Noise).String()
+		numbers = append(numbers, corridor.Numbers.String())
+		ends = append(ends, corridor.End(from).String())
+	}
+	result = fmt.Sprintf(
+		"%v\t %v\t %v\t %v",
+		strings.Join(ends, " "),
+		noise,
+		doors,
+		strings.Join(numbers, " "),
+	)
+	return
 }
 
 func (a *Area) Show() string {
@@ -33,15 +59,14 @@ func (a *Area) Show() string {
 		neighbors = append(neighbors, n.String())
 	}
 
-	return fmt.Sprintf("- %v%v %s,%d -> %s\t%-21s\t %s\t| %v\t| %v\n",
+	return fmt.Sprintf("- %v%v %s,%d %-21s\t%-9s \t> %v \t| %v\n",
 		Damage(a.IsDamaged),
 		Fire(a.IsInFire),
 		a,
 		a.Items,
-		strings.Join(neighbors, ","),
 		description,
 		a.ExplorationToken,
-		a.Gates,
+		a.Corridors.Show(a),
 		strings.Join(actors, " "),
 	)
 }

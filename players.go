@@ -214,7 +214,7 @@ func (p *Player) ResolveNoise() {
 		corridor := p.Corridor(n)
 		Show(p, "makes noise in corridor", corridor.Numbers)
 		if corridor.Noise {
-			for _, c := range p.Area.Gates {
+			for _, c := range p.Area.Corridors {
 				c.Noise = false
 			}
 			encounter = true

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"slices"
-	"strings"
 )
 
 type Area struct {
@@ -12,7 +11,7 @@ type Area struct {
 	IsDamaged bool
 	IsInFire  bool
 
-	Gates
+	Corridors
 	Intruders
 	Players
 
@@ -31,7 +30,7 @@ func newArea(id int, class string) *Area {
 }
 
 func (a *Area) Danger() {
-	for _, c := range a.Gates {
+	for _, c := range a.Corridors {
 		c.Noise = true
 	}
 }
@@ -50,8 +49,11 @@ func (a *Area) IsReachable() bool {
 
 func (a *Area) Neighbors() (neighbors Areas) {
 	neighbors = Areas{}
-	for _, gate := range a.Gates {
-		neighbors = append(neighbors, gate.Area)
+	for _, corridor := range a.Corridors {
+		end := corridor.End(a)
+		if end.IsReachable() {
+			neighbors = append(neighbors, corridor.End(a))
+		}
 	}
 
 	return neighbors
@@ -71,13 +73,41 @@ func (a *Area) String() string {
 	return fmt.Sprintf("%02d", a.Id)
 }
 
-func (a *Area) Corridor(n int) *Gate {
-	for _, c := range a.Gates {
+func (a *Area) Corridor(n int) *Corridor {
+	for _, c := range a.Corridors {
 		if slices.Contains(c.Numbers, n) {
 			return c
 		}
 	}
 	return nil
+}
+
+type Corridor struct {
+	Id    int
+	AreaX *Area
+	AreaY *Area
+	Door  string
+	Noise bool
+	Numbers
+}
+
+func (c *Corridor) End(a *Area) *Area {
+	if a == c.AreaX {
+		return c.AreaY
+	}
+	return c.AreaX
+}
+
+func (c *Corridor) IsReachable() bool {
+	return c.Door == door_open && c.AreaX.IsReachable() && c.AreaY.IsReachable()
+}
+
+type Corridors []*Corridor
+
+type Gates []*struct {
+	X int
+	Y int
+	N []int
 }
 
 type Board struct {
@@ -89,14 +119,6 @@ func NewBoard() (b *Board) {
 		Area: areas,
 	}
 
-	corridorId := 0
-	connectAreas := func(c *Corridor) {
-		c.Id, corridorId = corridorId, corridorId+1
-		areaX, areaY := b.Area[c.AreaX], b.Area[c.AreaY]
-		areaX.Gates = append(areaX.Gates, newGate(areaY, c))
-		areaY.Gates = append(areaY.Gates, newGate(areaX, c))
-	}
-
 	for _, area := range b.Area {
 		if area.Class != room_1 && area.Class != room_2 {
 			area.Room = &Room{
@@ -105,8 +127,19 @@ func NewBoard() (b *Board) {
 		}
 	}
 
-	for _, corridor := range corridors {
-		connectAreas(corridor)
+	corridorId := 0
+	for _, gate := range gates {
+		corridorId++
+		areaX, areaY := b.Area[gate.X], b.Area[gate.Y]
+		c := &Corridor{
+			Id:      corridorId,
+			AreaX:   areaX,
+			AreaY:   areaY,
+			Door:    door_open,
+			Numbers: gate.N,
+		}
+		areaX.Corridors = append(areaX.Corridors, c)
+		areaY.Corridors = append(areaY.Corridors, c)
 	}
 
 	return
@@ -132,51 +165,4 @@ func (b *Board) Fires() (result int) {
 
 func (b *Board) Destroyed() bool {
 	return b.Damages() > 8 || b.Fires() > 8
-}
-
-type Corridor struct {
-	Id    int
-	AreaX int
-	AreaY int
-	Door  string
-	Noise bool
-	Numbers
-}
-
-type Corridors []*Corridor
-
-func newCorridor(areaX, areaY int, numbers ...int) *Corridor {
-	return &Corridor{
-		AreaX:   areaX,
-		AreaY:   areaY,
-		Numbers: numbers,
-		Door:    door_open,
-	}
-}
-
-type Gate struct {
-	*Area
-	*Corridor
-}
-
-type Gates []*Gate
-
-func newGate(a *Area, t *Corridor) *Gate {
-	return &Gate{
-		Area:     a,
-		Corridor: t,
-	}
-}
-
-func (g Gates) String() (result string) {
-	doors := ""
-	noise := ""
-	numbers := []string{}
-	for _, gate := range g {
-		doors += gate.Corridor.Door
-		noise += Noise(gate.Corridor.Noise).String()
-		numbers = append(numbers, gate.Corridor.Numbers.String())
-	}
-	result = fmt.Sprintf("%v\t%v\t%v", noise, doors, strings.Join(numbers, " "))
-	return
 }
