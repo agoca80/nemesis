@@ -14,7 +14,7 @@ func main() {
 	cooperative := false
 	players := 1
 
-	g := NewGame(players)
+	g := newGame(players)
 	g.Prepare(cooperative)
 	g.Run()
 	Show("Game over!!!")

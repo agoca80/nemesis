@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+)
+
 type Actor interface {
 	Dies()
 }
@@ -13,6 +18,17 @@ type Fire bool
 type Mode int
 
 type Noise bool
+
+type Numbers []int
+
+func (n Numbers) String() string {
+	sort.Ints(n)
+	total := 0
+	for _, d := range n {
+		total = total*10 + d
+	}
+	return fmt.Sprintf("%02d", total)
+}
 
 type Step string
 

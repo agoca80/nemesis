@@ -50,6 +50,13 @@ type IntruderToken struct {
 
 type IntruderTokens []*IntruderToken
 
+type ItemCard struct {
+	*card
+	Color     string
+	SingleUse bool
+	Cost      int
+}
+
 type Room struct {
 	*card
 	Color            string
@@ -63,7 +70,7 @@ type Weakness struct {
 	Revealed bool
 }
 
-func NewAttackCard(wounds int, name string, symbols ...string) *AttackCard {
+func newAttack(wounds int, name string, symbols ...string) *AttackCard {
 	return &AttackCard{
 		card:    newCard(name),
 		Wounds:  wounds,
@@ -71,14 +78,14 @@ func NewAttackCard(wounds int, name string, symbols ...string) *AttackCard {
 	}
 }
 
-func contaminationCard(infected bool) *ContaminationCard {
+func newContamination(infected bool) *ContaminationCard {
 	return &ContaminationCard{
 		card: newCard("contamination"),
 		bool: infected,
 	}
 }
 
-func CoordinatesCard(coordinates string) *Coordinates {
+func newCoordinates(coordinates string) *Coordinates {
 	return &Coordinates{
 		card:        newCard("coordinates"),
 		coordinates: coordinates,
@@ -102,7 +109,7 @@ func (c *Coordinates) String() (str string) {
 	return
 }
 
-func NewEventCard(corridor int, name string, symbols ...string) *EventCard {
+func newEvent(corridor int, name string, symbols ...string) *EventCard {
 	return &EventCard{
 		card:     newCard(name),
 		Corridor: corridor,
@@ -110,7 +117,7 @@ func NewEventCard(corridor int, name string, symbols ...string) *EventCard {
 	}
 }
 
-func NewExplorationToken(items int, event string) *ExplorationToken {
+func newExplorationToken(items int, event string) *ExplorationToken {
 	return &ExplorationToken{
 		card:  newCard("exploration token"),
 		Items: items,
@@ -137,9 +144,10 @@ func (it *IntruderToken) String() string {
 	return it.name
 }
 
-func NewGoal(players int, name string) *Goal {
+func newGoal(players int, name string) *Goal {
 	return &Goal{
-		card: newCard(name),
+		card:   newCard(name),
+		Number: players,
 		eval: func(game *Game) bool {
 			Show("PENDING Goal.Eval")
 			return false
@@ -147,7 +155,7 @@ func NewGoal(players int, name string) *Goal {
 	}
 }
 
-func NewRoom(name, color string, computer bool) *Room {
+func newRoom(name, color string, computer bool) *Room {
 	return &Room{
 		card:     newCard(name),
 		Color:    color,
@@ -162,13 +170,13 @@ type SeriousWound struct {
 
 type SeriousWounds []*SeriousWound
 
-func NewSeriousWound(name string) *SeriousWound {
+func newWound(name string) *SeriousWound {
 	return &SeriousWound{
 		card: newCard(name),
 	}
 }
 
-func NewWeakness(name string) *Weakness {
+func newWeakness(name string) *Weakness {
 	return &Weakness{
 		card: newCard(name),
 	}

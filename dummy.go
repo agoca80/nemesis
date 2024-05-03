@@ -15,9 +15,9 @@ func (p *Player) chooseCharacter(characters *Deck) {
 	characters.Shuffle()
 }
 
-func (p *Player) chooseCorridor() *Corridor {
-	options := Corridors{}
-	for _, c := range p.Corridors {
+func (p *Player) chooseCorridor() *Gate {
+	options := Gates{}
+	for _, c := range p.Gates {
 		if c.IsReachable() {
 			options = append(options, c)
 		}

@@ -17,7 +17,7 @@ func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	return
 }
 
-func (game *Game) ResolveMove(player *Player, corridor *Corridor) {
+func (game *Game) ResolveMove(player *Player, corridor *Gate) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
 		player.Area.Intruders.Attack(player)
@@ -47,7 +47,7 @@ func (a ActionBasic) Resolve(data map[string]interface{}) {
 	player := data["player"].(*Player)
 	switch string(a) {
 	case basic_move:
-		corridor := data["corridor"].(*Corridor)
+		corridor := data["corridor"].(*Gate)
 		player.ResolveMove(player, corridor)
 	default:
 		Pending(a, "not implemented")

@@ -6,64 +6,32 @@ import (
 	"strings"
 )
 
-type Numbers []int
-
 type Area struct {
-	*Room
+	Id        int
+	Class     string
+	IsDamaged bool
+	IsInFire  bool
 
-	Corridors
+	Gates
 	Intruders
 	Players
 
-	Class     string
-	Id        int
-	IsDamaged bool
-	IsInFire  bool
+	*Room
 }
 
 type Areas []*Area
 
-type Corridor struct {
-	*Area
-	*Tunnel
-}
-
-type Corridors []*Corridor
-
-type Tunnel struct {
-	Id int
-	Numbers
-	Door  string
-	Noise bool
-}
-
-type Tunnels []*Tunnel
-
-type Board struct {
-	Area   []*Area
-	Tunnel []*Tunnel
-}
-
-func (n Numbers) String() string {
-	total := 0
-	for _, number := range n {
-		total = total*10 + number
+func newArea(id int, class string) *Area {
+	return &Area{
+		Id:        id,
+		Class:     class,
+		Players:   Players{},
+		Intruders: Intruders{},
 	}
-	return fmt.Sprintf("%02d", total)
-}
-
-func (a *Area) RemPlayer(p *Player) {
-	index := slices.Index(a.Players, p)
-	a.Players = slices.Delete(a.Players, index, index+1)
-}
-
-func (a *Area) RemIntruder(i *Intruder) {
-	index := slices.Index(a.Intruders, i)
-	a.Intruders = slices.Delete(a.Intruders, index, index+1)
 }
 
 func (a *Area) Danger() {
-	for _, c := range a.Corridors {
+	for _, c := range a.Gates {
 		c.Noise = true
 	}
 }
@@ -80,12 +48,22 @@ func (a *Area) IsReachable() bool {
 	return A00 < a.Id && a.Id < S01
 }
 
-func (a *Area) String() string {
-	return fmt.Sprintf("A%02d", a.Id)
+func (a *Area) RemIntruder(i *Intruder) {
+	index := slices.Index(a.Intruders, i)
+	a.Intruders = slices.Delete(a.Intruders, index, index+1)
 }
 
-func (a *Area) Corridor(n int) *Corridor {
-	for _, c := range a.Corridors {
+func (a *Area) RemPlayer(p *Player) {
+	index := slices.Index(a.Players, p)
+	a.Players = slices.Delete(a.Players, index, index+1)
+}
+
+func (a *Area) String() string {
+	return fmt.Sprintf("%03d", a.Id)
+}
+
+func (a *Area) Corridor(n int) *Gate {
+	for _, c := range a.Gates {
 		if slices.Contains(c.Numbers, n) {
 			return c
 		}
@@ -93,32 +71,36 @@ func (a *Area) Corridor(n int) *Corridor {
 	return nil
 }
 
-func area(id int, class string) *Area {
-	return &Area{
-		Id:        id,
-		Class:     class,
-		Players:   Players{},
-		Intruders: Intruders{},
-	}
+type Board struct {
+	Area []*Area
 }
 
-func corridor(a *Area, t *Tunnel) *Corridor {
-	return &Corridor{
-		Area:   a,
-		Tunnel: t,
+func NewBoard() (b *Board) {
+	b = &Board{
+		Area: areas,
 	}
-}
 
-func (c *Corridor) String() string {
-	return c.Area.String()
-}
-
-func (c Corridors) String() (result string) {
-	corridors := Symbols{}
-	for _, corridor := range c {
-		corridors = append(corridors, corridor.String())
+	corridorId := 0
+	connectAreas := func(c *Corridor) {
+		c.Id, corridorId = corridorId, corridorId+1
+		areaX, areaY := b.Area[c.AreaX], b.Area[c.AreaY]
+		areaX.Gates = append(areaX.Gates, newGate(areaY, c))
+		areaY.Gates = append(areaY.Gates, newGate(areaX, c))
 	}
-	return strings.Join(corridors, "\t")
+
+	for _, area := range b.Area {
+		if area.Class != room_1 && area.Class != room_2 {
+			area.Room = &Room{
+				card: newCard(area.Class),
+			}
+		}
+	}
+
+	for _, tunnel := range tunnels {
+		connectAreas(tunnel)
+	}
+
+	return
 }
 
 func (b *Board) Damages() (damaged int) {
@@ -141,4 +123,59 @@ func (b *Board) Fires() (result int) {
 
 func (b *Board) Destroyed() bool {
 	return b.Damages() > 8 || b.Fires() > 8
+}
+
+type Corridor struct {
+	Id    int
+	AreaX int
+	AreaY int
+	Door  string
+	Noise bool
+	Numbers
+}
+
+type Corridors []*Corridor
+
+func newCorridor(areaX, areaY int, numbers ...int) *Corridor {
+	return &Corridor{
+		AreaX:   areaX,
+		AreaY:   areaY,
+		Numbers: numbers,
+		Door:    door_open,
+	}
+}
+
+func (c *Corridor) String() string {
+	return fmt.Sprintf(
+		"%v%v%v",
+		Noise(c.Noise),
+		c.Numbers,
+		c.Door,
+	)
+}
+
+type Gate struct {
+	*Area
+	*Corridor
+}
+
+type Gates []*Gate
+
+func newGate(a *Area, t *Corridor) *Gate {
+	return &Gate{
+		Area:     a,
+		Corridor: t,
+	}
+}
+
+func (g *Gate) String() string {
+	return g.Corridor.String()
+}
+
+func (g Gates) String() (result string) {
+	gates := []string{}
+	for _, gate := range g {
+		gates = append(gates, gate.Numbers.String())
+	}
+	return strings.Join(gates, "\t")
 }

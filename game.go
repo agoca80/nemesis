@@ -15,19 +15,54 @@ type Game struct {
 	*IntruderBag
 
 	// Decks
-	Attacks       *Deck
-	Contamination *Deck
-	Events        *Deck
-	Weaknesses    *Deck
-	Wounds        *Deck
+	Attacks           *Deck
+	Characters        *Deck
+	Contamination     *Deck
+	Coordinates       *Deck
+	Events            *Deck
+	ExplorationTokens *Deck
+	GoalsCoop         *Deck
+	GoalsCorp         *Deck
+	GoalsPriv         *Deck
+	Rooms1            *Deck
+	Rooms2            *Deck
+	Weaknesses        *Deck
+	Wounds            *Deck
 
-	Coordinate          *Coordinates
+	CoordinateCard      *Coordinates
 	EscapePods          []Cards
 	Destination         string
 	Eggs                int
 	EngineStatus        [3]bool
 	hyperdriveCountdown int
 	Weakness            []*Weakness
+}
+
+func newGame(players int) (g *Game) {
+	g = &Game{
+		Board:   NewBoard(),
+		Players: Players{},
+
+		Attacks:           NewDeck(attacks),
+		Characters:        NewDeck(characters),
+		Contamination:     NewDeck(contamination),
+		Coordinates:       NewDeck(coordinates),
+		Events:            NewDeck(events),
+		ExplorationTokens: NewDeck(explorationTokens),
+		GoalsCoop:         NewDeck(goalsCoop),
+		GoalsCorp:         NewDeck(goalsCorp[:players+4]),
+		GoalsPriv:         NewDeck(goalsPriv[:players+4]),
+		Rooms1:            NewDeck(rooms1),
+		Rooms2:            NewDeck(rooms2),
+		Weaknesses:        NewDeck(weaknesses),
+		Wounds:            NewDeck(wounds),
+	}
+
+	for range players {
+		g.Players = append(g.Players, NewPlayer(g))
+	}
+
+	return
 }
 
 func (game *Game) ResolveEncounter(p *Player) {
@@ -45,7 +80,7 @@ func (game *Game) ResolveEncounter(p *Player) {
 	}
 }
 
-func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event string) {
+func (game *Game) ResolveExploration(player *Player, corridor *Gate) (event string) {
 	area := player.Area
 	token := area.ExplorationToken
 	area.ExplorationToken = nil
@@ -104,7 +139,7 @@ func (g *Game) ResolveNoise(p *Player) {
 		corridor := p.Corridor(n)
 		Show(p, "makes noise in corridor", corridor.Numbers)
 		if corridor.Noise {
-			for _, c := range p.Area.Corridors {
+			for _, c := range p.Area.Gates {
 				c.Noise = false
 			}
 			encounter = true

@@ -12,7 +12,7 @@ func Show(args ...interface{}) {
 	fmt.Println(args...)
 }
 
-func (c *Corridor) Show() string {
+func (c *Gate) Show() string {
 	return fmt.Sprintf(
 		"%v%v%v%v",
 		Noise(c.Noise),
@@ -22,7 +22,7 @@ func (c *Corridor) Show() string {
 	)
 }
 
-func (c *Corridors) Show() string {
+func (c *Gates) Show() string {
 	corridors := []string{}
 	for _, c := range *c {
 		corridors = append(corridors, c.Show())
@@ -46,14 +46,14 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	return fmt.Sprintf("- %v%v %s,%d %s\t %s\t| %v\t| %v\n",
+	return fmt.Sprintf("- %v%v %s,%d %-21s\t %s\t| %v\t| %v\n",
 		Damage(a.IsDamaged),
 		Fire(a.IsInFire),
 		a,
 		a.Items,
 		description,
 		a.ExplorationToken,
-		a.Corridors.Show(),
+		a.Gates,
 		strings.Join(actors, " "),
 	)
 }

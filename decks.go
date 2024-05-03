@@ -7,7 +7,7 @@ import (
 )
 
 var cardId = 0
-var deckId = 'A'
+var deckId = 'a'
 
 type card struct {
 	id   string
