@@ -23,6 +23,6 @@ func ResolveEvent(event *EventCard) {
 	}
 
 	if game.Destroyed() {
-		Pending("The ship has been destroyed!!!")
+		Show("The ship has been destroyed!!!")
 	}
 }

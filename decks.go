@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 )
 
 var cardId = 0
@@ -40,14 +39,6 @@ func (c *card) Name() string {
 
 func (c *card) String() string {
 	return c.id
-}
-
-func (c Cards) String() string {
-	ids := Symbols{}
-	for _, card := range c {
-		ids = append(ids, card.String())
-	}
-	return strings.Join(ids, ",")
 }
 
 func (c Cards) shuffle() (shuffled Cards) {

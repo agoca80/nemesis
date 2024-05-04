@@ -11,13 +11,9 @@ type Actor interface {
 
 type ExplorationTokenType string
 
-type Damage bool
-
-type Fire bool
+type Issue bool
 
 type Mode int
-
-type Noise bool
 
 type Numbers []int
 
@@ -32,22 +28,8 @@ func (n Numbers) String() string {
 
 type Step string
 
-func (d Damage) String() string {
-	if d {
-		return "X"
-	}
-	return " "
-}
-
-func (f Fire) String() string {
-	if f {
-		return "X"
-	}
-	return " "
-}
-
-func (n Noise) String() string {
-	if n {
+func (i Issue) String() string {
+	if i {
 		return "!"
 	}
 	return "."

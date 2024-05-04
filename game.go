@@ -14,6 +14,7 @@ type Game struct {
 	*IntruderBag
 
 	// Decks
+	HelpDeck  *Deck
 	GoalsCoop *Deck
 	GoalsCorp *Deck
 	GoalsPriv *Deck
@@ -34,6 +35,7 @@ func newGame(players int) (game *Game) {
 		GoalsCoop: newDeck(goalsCoop),
 		GoalsCorp: newDeck(goalsCorp[:players+4]),
 		GoalsPriv: newDeck(goalsPriv[:players+4]),
+		HelpDeck:  newDeck(helpCards[:players]),
 	}
 
 	for range players {
@@ -64,6 +66,7 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 	area.ExplorationToken = nil
 
 	event = token.Event
+	Show(player, "reveals", token, "in the", area.name)
 	if event == ev_silence && player.IsDrenched {
 		Show(player, "tried to be silent but they were too noisy...")
 		event = ev_danger
@@ -73,22 +76,15 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 	case ev_damaged:
 		area.IsDamaged = true
 	case ev_danger:
-		Show(area, "is dangerous!")
 		area.Danger()
 	case ev_door:
-		if corridor.Door != door_broken {
-			Show(corridor, "door closes")
+		if corridor.Door == door_open {
 			corridor.Door = door_closed
-		} else {
-			Show(corridor, "tried to close but is broken")
 		}
 	case ev_fire:
 		area.IsInFire = true
 	case ev_mucus:
-		Show(area, "is full of mucus")
 		player.IsDrenched = true
-	case ev_silence:
-		Show(area, "is silent")
 	}
 
 	if area.name != room_nest && area.name != room_slime {
@@ -125,25 +121,23 @@ func (g *Game) Over() bool {
 	return g.Destroyed() || len(g.Players.Alive()) == 0 || g.hyperdriveCountdown == 0
 }
 
-func (g *Game) Run() {
+func (game *Game) Run() {
 	var step = map[Step]func() Step{
-		step_draw:      g.draw,
-		step_token:     g.token,
-		step_turn:      g.stepTurn,
-		step_counters:  g.counters,
-		step_attack:    g.stepAttacks,
-		step_fire:      g.fireDamage,
-		step_event:     g.event,
-		step_evolution: g.evolution,
+		step_draw:      game.draw,
+		step_token:     game.token,
+		step_turn:      game.stepTurn,
+		step_counters:  game.counters,
+		step_attack:    game.stepAttacks,
+		step_fire:      game.fireDamage,
+		step_event:     game.event,
+		step_evolution: game.evolution,
 	}
 
 	s := Step(step_draw)
-	for !g.Over() {
-		Show(strings.Repeat("-", 80))
+	for !game.Over() {
+		Show(strings.Repeat(".", 58))
 		Show(strings.ToUpper(string(s)))
 		s = step[s]()
+		Show(strings.Repeat(".", 58))
 	}
-
-	game.Players.Show()
-	Show("Game over!!!")
 }

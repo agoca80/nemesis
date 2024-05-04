@@ -8,8 +8,8 @@ import (
 type Area struct {
 	Id        int
 	Class     string
-	IsDamaged bool
-	IsInFire  bool
+	IsDamaged Issue
+	IsInFire  Issue
 
 	Corridors
 	Intruders
@@ -87,7 +87,7 @@ type Corridor struct {
 	AreaX *Area
 	AreaY *Area
 	Door  string
-	Noise bool
+	Noise Issue
 	Numbers
 }
 

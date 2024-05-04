@@ -33,6 +33,7 @@ func (g *Game) token() Step {
 }
 
 func (g *Game) stepTurn() Step {
+	game.Board.Show()
 	round := func(players Players) (goingOn Players) {
 		for _, player := range players {
 			if player.GoingOn() {

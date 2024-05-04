@@ -14,7 +14,7 @@ const (
 
 func attackByte(i *Intruder, p *Player) {
 	Show(i, "bytes", p, "!")
-	if len(p.SeriousWounds) == 2 {
+	if len(p.Wounds) == 2 {
 		p.Dies()
 	} else {
 		p.SufferSeriousWound()
@@ -33,7 +33,7 @@ func attackClaws(i *Intruder, p *Player) {
 func attackFrenzy(i *Intruder, p *Player) {
 	Show(i, "in area", i.Area, "goes into a frenzy!!!")
 	for _, player := range i.Area.Players.Alive() {
-		if len(player.SeriousWounds) < 2 {
+		if len(player.Wounds) < 2 {
 			player.SufferSeriousWound()
 		} else {
 			player.Dies()
@@ -65,7 +65,7 @@ func attackScratch(i *Intruder, p *Player) {
 
 func attackTail(i *Intruder, p *Player) {
 	Show(i, "atacks", p, "with its tail!")
-	if len(p.SeriousWounds) == 1 {
+	if len(p.Wounds) == 1 {
 		p.Dies()
 	} else {
 		p.SufferSeriousWound()
@@ -112,7 +112,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 
 	if i.Kind == larva {
 		Show(i, "infestes", p, "!")
-		p.IsInfested = true
+		p.IsInfected = true
 		p.SuffersContamination()
 		RemIntruder(i)
 		return

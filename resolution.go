@@ -78,7 +78,7 @@ func (g *Game) AskAction(player *Player) {
 
 	action := actionData["action"].(Action)
 	action.Resolve(actionData)
+	game.Board.Show()
 	player.Show()
-	game.Show()
 	Wait()
 }

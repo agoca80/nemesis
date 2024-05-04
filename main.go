@@ -7,7 +7,7 @@ import (
 const (
 	show_board   = true
 	show_players = true
-	wait         = true
+	wait         = false
 )
 
 var (
@@ -16,12 +16,12 @@ var (
 
 func main() {
 	cooperative := false
-	players := 1
+	players := 5
 
 	game = newGame(players)
 	game.Prepare(cooperative)
 	game.Run()
-	Show("Game over!!!")
+	finish()
 }
 
 func Pending(args ...interface{}) {

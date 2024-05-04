@@ -295,6 +295,14 @@ var goalsPriv = Cards{
 	newGoal(5, "The ultimate epiphany"),      // Player 5 must not survive OR you are the only one surviving
 }
 
+var helpCards = Cards{
+	NewHelpCard(1),
+	NewHelpCard(2),
+	NewHelpCard(3),
+	NewHelpCard(4),
+	NewHelpCard(5),
+}
+
 var rooms1 = newDeck(Cards{
 	newRoom(room_storage, red, false),
 	newRoom("Fire control system", yellow, true),

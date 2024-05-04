@@ -2,38 +2,27 @@ package main
 
 import (
 	"bufio"
-	"cmp"
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 	"text/tabwriter"
 )
 
-func Show(args ...interface{}) {
-	fmt.Println(args...)
+func (c *ContaminationCard) Show() string {
+	return c.Infected.String()
 }
 
-func (corridors Corridors) Show(from *Area) (result string) {
-	ends := []string{}
+func (corridors Corridors) String() (result string) {
 	doors := ""
 	noise := ""
-	numbers := []string{}
-	slices.SortFunc(corridors, func(a, b *Corridor) int {
-		return cmp.Compare(a.Numbers.String(), b.Numbers.String())
-	})
 	for _, corridor := range corridors {
 		doors += corridor.Door
-		noise += Noise(corridor.Noise).String()
-		numbers = append(numbers, corridor.Numbers.String())
-		ends = append(ends, corridor.End(from).String())
+		noise += corridor.Noise.String()
 	}
 	result = fmt.Sprintf(
-		"%v\t %v\t %v\t %v",
-		strings.Join(ends, " "),
+		"%v\t%v",
 		noise,
 		doors,
-		strings.Join(numbers, " "),
 	)
 	return
 }
@@ -54,24 +43,25 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	return fmt.Sprintf("- %v%v %s,%d %-21s\t%-9s \t> %v \t| %v\n",
-		Damage(a.IsDamaged),
-		Fire(a.IsInFire),
+	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v",
+		a.IsInFire,
+		a.IsDamaged,
 		a,
 		a.Items,
-		a.ExplorationToken,
 		description,
-		a.Corridors.Show(a),
+		a.Corridors,
+		a.Neighbors(),
 		strings.Join(actors, " "),
 	)
 }
 
 func (p *Player) Show() string {
-	return fmt.Sprintf("%-9v %v LightWounds %v SeriousWounds %v Hand %v",
+	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
 		p.Character,
+		p.IsInfected,
 		p.State,
-		p.LightWounds,
-		p.SeriousWounds,
+		p.Bruises,
+		p.Wounds,
 		p.Hand,
 	)
 }
@@ -81,10 +71,12 @@ func (p Players) Show() {
 		return
 	}
 
-	Show()
+	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, player := range p {
-		fmt.Println(player.Show())
+		fmt.Fprintf(output, "%v\n", player.Show())
 	}
+	output.Flush()
+	Show()
 }
 
 func (b *Board) Show() {
@@ -92,22 +84,27 @@ func (b *Board) Show() {
 		return
 	}
 
-	Show()
+	Show(strings.Repeat("-", 58))
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, a := range b.Area {
 		if !a.IsReachable() {
 			continue
 		}
-		fmt.Fprintf(output, "%v", a.Show())
+		fmt.Fprintf(output, "%v\n", a.Show())
 	}
 	fmt.Fprint(output)
 	output.Flush()
+	Show(strings.Repeat("-", 58))
 	Show()
 }
 
 func (game *Game) Show() {
 	game.Players.Show()
 	game.Board.Show()
+}
+
+func Show(args ...interface{}) {
+	fmt.Println(args...)
 }
 
 func Wait() {

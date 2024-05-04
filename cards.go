@@ -15,7 +15,22 @@ type AttackCard struct {
 
 type ContaminationCard struct {
 	*card
-	bool
+	Infected Issue
+}
+
+func newContamination(infected bool) *ContaminationCard {
+	return &ContaminationCard{
+		card:     newCard("contamination"),
+		Infected: Issue(infected),
+	}
+}
+
+func (c *ContaminationCard) Reveal() string {
+	if c.Infected {
+		return "infected"
+	} else {
+		return "clean"
+	}
 }
 
 type Coordinates struct {
@@ -78,13 +93,6 @@ func newAttack(wounds int, name string, symbols ...string) *AttackCard {
 	}
 }
 
-func newContamination(infected bool) *ContaminationCard {
-	return &ContaminationCard{
-		card: newCard("contamination"),
-		bool: infected,
-	}
-}
-
 func newCoordinates(coordinates string) *Coordinates {
 	return &Coordinates{
 		card:        newCard("coordinates"),
@@ -127,7 +135,7 @@ func newExplorationToken(items int, event string) *ExplorationToken {
 
 func (et *ExplorationToken) String() (str string) {
 	if et != nil {
-		str = fmt.Sprintf("%d-%s", et.Items, et.Event)
+		str = fmt.Sprintf("%s-%d", et.Event, et.Items)
 	}
 	return
 }

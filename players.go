@@ -10,16 +10,16 @@ type Player struct {
 	*Deck
 	*HelpCard
 
-	Id            int
-	Hand          Cards
-	Character     string
-	Jonesy        bool
-	LightWounds   int
-	SeriousWounds SeriousWounds
+	Bruises   int
+	Id        int
+	Goals     Cards
+	Hand      Cards
+	Character string
+	Jonesy    bool
+	Wounds    Cards
 
-	IsDrenched bool
-	IsInfested bool
-	Goals      Cards
+	IsDrenched Issue
+	IsInfected Issue
 	Signaled   bool
 	State      string
 }
@@ -31,11 +31,11 @@ var playerId = 0
 func NewPlayer() *Player {
 	playerId++
 	return &Player{
-		Id:            playerId,
-		Goals:         Cards{},
-		Hand:          Cards{},
-		SeriousWounds: SeriousWounds{},
-		State:         player_alive,
+		Id:     playerId,
+		Goals:  Cards{},
+		Hand:   Cards{},
+		Wounds: Cards{},
+		State:  player_alive,
 	}
 }
 
@@ -83,14 +83,14 @@ func (p *Player) SuffersContamination() {
 }
 
 func (p *Player) SuffersLightWound() {
-	if len(p.SeriousWounds) == 3 {
+	if len(p.Wounds) == 3 {
 		p.Dies()
 		return
 	}
 
-	p.LightWounds++
-	if p.LightWounds == 3 {
-		p.LightWounds = 0
+	p.Bruises++
+	if p.Bruises == 3 {
+		p.Bruises = 0
 		p.SufferSeriousWound()
 	} else {
 		Show(p, "suffers a light wound")
@@ -98,13 +98,13 @@ func (p *Player) SuffersLightWound() {
 }
 
 func (p *Player) SufferSeriousWound() {
-	if len(p.SeriousWounds) == 3 {
+	if len(p.Wounds) == 3 {
 		p.Dies()
 		return
 	}
 
 	card := wounds.Draw().(*SeriousWound)
-	p.SeriousWounds = append(p.SeriousWounds, card)
+	p.Wounds = append(p.Wounds, card)
 	Show(p, "suffers", card.name, "!")
 }
 
@@ -117,8 +117,8 @@ func (p *Player) IsInCombat() bool {
 }
 
 func (p *Player) HasWound(name string) bool {
-	return slices.ContainsFunc(p.SeriousWounds, func(w *SeriousWound) bool {
-		return w.Name() == name && !w.isDressed
+	return slices.ContainsFunc(p.Wounds, func(w Card) bool {
+		return w.Name() == name && !w.(*SeriousWound).isDressed
 	})
 }
 
@@ -165,8 +165,8 @@ func (p Players) PassJonesy() (new int) {
 }
 
 func (p *Player) Dies() {
-	Show(p, "dies!")
 	p.State = player_dead
+	Show(p, "dies!")
 }
 
 func (p *Player) Alive() bool {
@@ -199,15 +199,15 @@ func (p *Player) ResolveNoise() {
 	encounter := false
 	result := p.RollNoise()
 	if result == ev_silence && p.IsDrenched {
-		Show(p, "was silent but is drenched in mucus")
+		Show(p, "was silent but is drenched in mucus!")
 		result = ev_danger
 	}
 
 	switch result {
 	case ev_silence:
-		Show(p, "makes no noise")
+		Show(p, "is silent...")
 	case ev_danger:
-		Show(p.Area, "is in danger!")
+		Show(p, "is in danger!")
 		p.Danger()
 	default:
 		n, _ := strconv.Atoi(result)

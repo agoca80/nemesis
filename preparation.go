@@ -74,13 +74,6 @@ func (game *Game) Prepare(coop bool) {
 	}
 
 	// Crew preparation step 14
-	helpCards := Cards{
-		NewHelpCard(1),
-		NewHelpCard(2),
-		NewHelpCard(3),
-		NewHelpCard(4),
-		NewHelpCard(5),
-	}
 	helpDeck := newDeck(helpCards[:len(game.Players)])
 	for _, p := range game.Players {
 		p.HelpCard = helpDeck.Draw().(*HelpCard)

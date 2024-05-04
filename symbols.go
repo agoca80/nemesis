@@ -130,12 +130,12 @@ const (
 
 // game steps
 const (
-	step_draw      = "draw"
-	step_token     = "passToken"
+	step_draw      = "draw action cards"
+	step_token     = "pass Token"
 	step_turn      = "turn"
 	step_counters  = "counters"
 	step_attack    = "attack"
-	step_fire      = "fireDamage"
+	step_fire      = "fire Damage"
 	step_event     = "event"
 	step_evolution = "evolution"
 )
