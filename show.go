@@ -30,7 +30,7 @@ func (corridors Corridors) String() (result string) {
 func (a *Area) Show() string {
 	actors := []string{}
 	for _, p := range a.Players {
-		actors = append(actors, p.Character)
+		actors = append(actors, p.String())
 	}
 	for _, i := range a.Intruders {
 		actors = append(actors, i.Kind)
@@ -55,7 +55,7 @@ func (a *Area) Show() string {
 	)
 }
 
-func (p *Player) Show() string {
+func (p *player) Show() string {
 	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
 		p.Character,
 		p.IsInfected,
@@ -84,7 +84,6 @@ func (b *Board) Show() {
 		return
 	}
 
-	Show(strings.Repeat("-", 58))
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, a := range b.Area {
 		if !a.IsReachable() {
@@ -94,7 +93,6 @@ func (b *Board) Show() {
 	}
 	fmt.Fprint(output)
 	output.Flush()
-	Show(strings.Repeat("-", 58))
 	Show()
 }
 
@@ -111,5 +109,20 @@ func Wait() {
 	if wait {
 		Show("Press Enter to continue...")
 		bufio.NewReader(os.Stdin).ReadBytes('\n')
+	}
+}
+
+func Pending(args ...interface{}) {
+	Show("PENDING", args)
+	os.Exit(1)
+}
+
+func Prompt(message string) {
+	fmt.Print("PROMPT ", message, "> ")
+}
+
+func Debug(args ...interface{}) {
+	if debug {
+		Show("DEBUG", args)
 	}
 }

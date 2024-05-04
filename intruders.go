@@ -68,7 +68,7 @@ func (i *Intruder) Attack() {
 	ResolveIntruderAttack(i, player)
 }
 
-func (i Intruders) Attack(p *Player) {
+func (i Intruders) Attack(p *player) {
 	for _, intruder := range i {
 		ResolveIntruderAttack(intruder, p)
 	}

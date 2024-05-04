@@ -38,14 +38,15 @@ func newGame(players int) (game *Game) {
 		HelpDeck:  newDeck(helpCards[:players]),
 	}
 
-	for range players {
-		game.Players = append(game.Players, NewPlayer())
+	game.Players = append(game.Players, NewPlayer("human"))
+	for range players - 1 {
+		game.Players = append(game.Players, NewPlayer("dummy"))
 	}
 
 	return
 }
 
-func (game *Game) ResolveEncounter(p *Player) {
+func (game *Game) ResolveEncounter(p *player) {
 	token := game.FetchToken()
 	kind := token.name
 	if kind == token_blank {
@@ -60,7 +61,7 @@ func (game *Game) ResolveEncounter(p *Player) {
 	}
 }
 
-func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event string) {
+func (game *Game) ResolveExploration(player *player, corridor *Corridor) (event string) {
 	area := player.Area
 	token := area.ExplorationToken
 	area.ExplorationToken = nil
@@ -135,9 +136,18 @@ func (game *Game) Run() {
 
 	s := Step(step_draw)
 	for !game.Over() {
-		Show(strings.Repeat(".", 58))
+		Show(strings.Repeat("-", 58))
 		Show(strings.ToUpper(string(s)))
 		s = step[s]()
-		Show(strings.Repeat(".", 58))
+		Show()
 	}
+
+	game.finish()
+}
+
+func (game *Game) finish() {
+	Show(strings.Repeat("-", 58))
+	Show("GAME OVER!!!")
+	game.Board.Show()
+	game.Players.Show()
 }

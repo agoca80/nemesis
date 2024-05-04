@@ -19,6 +19,7 @@ type Deck struct {
 }
 
 type Card interface {
+	Id() string
 	Name() string
 	String() string
 }
@@ -31,6 +32,10 @@ func newCard(name string) *card {
 		id:   fmt.Sprintf("%c%02d", deckId, cardId),
 		name: name,
 	}
+}
+
+func (c *card) Id() string {
+	return c.id
 }
 
 func (c *card) Name() string {
@@ -85,4 +90,10 @@ func (d *Deck) Return(c Card) {
 
 func (d *Deck) Next() Card {
 	return d.Discard(d.Draw())
+}
+
+func (d *Deck) Random() (card Card) {
+	index := rand.Intn(len(d.cards))
+	card, d.cards[index], d.cards = d.cards[index], d.cards[len(d.cards)-1], d.cards[:len(d.cards)-1]
+	return
 }

@@ -4,18 +4,21 @@ import (
 	"math/rand"
 )
 
-func (p *Player) chooseCharacter(characters *Deck) {
-	shuffle := rand.Perm(2)
-	options := []Card{
-		characters.Draw(),
-		characters.Draw(),
-	}
-	p.Character = options[shuffle[0]].Name()
-	characters.Return(options[shuffle[1]])
-	characters.Shuffle()
+type Dummy struct {
+	*player
 }
 
-func (p *Player) chooseCorridor() *Corridor {
+func newDummy() Controller {
+	return &Dummy{}
+}
+
+func (p *Dummy) Choose(cards Cards) (selected, rejected Card) {
+	shuffle := rand.Perm(2)
+	selected, rejected = cards[shuffle[0]], cards[shuffle[1]]
+	return
+}
+
+func (p *Dummy) chooseCorridor() *Corridor {
 	options := Corridors{}
 	for _, c := range p.Area.Corridors {
 		if c.IsReachable() {
@@ -25,13 +28,12 @@ func (p *Player) chooseCorridor() *Corridor {
 	return options[rand.Intn(len(options))]
 }
 
-func (p *Player) NewAction() (actionData map[string]interface{}) {
+func (p *Dummy) NextAction() (action map[string]interface{}) {
 	if p.HandSize() < 1 {
 		return
 	}
 
 	return map[string]interface{}{
-		"player":   p,
 		"action":   ActionBasic(basic_move),
 		"corridor": p.chooseCorridor(),
 		"cost": Cards{

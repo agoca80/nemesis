@@ -1,5 +1,13 @@
 package main
 
+type Action interface {
+	Name() string
+	Cost() int
+	Resolve(map[string]interface{})
+}
+
+type Actions []Action
+
 type ActionBasic string
 
 func (a ActionBasic) Name() string {
@@ -25,7 +33,7 @@ func (a ActionBasic) Cost() int {
 		basic_pickup:   1,
 		basic_exchange: 1,
 		basic_prepare:  1,
-		basic_sneak:    1,
+		basic_sneak:    2,
 	}
 
 	return cost[a]

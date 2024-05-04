@@ -64,7 +64,7 @@ func (a *Area) RemIntruder(i *Intruder) {
 	a.Intruders = slices.Delete(a.Intruders, index, index+1)
 }
 
-func (a *Area) RemPlayer(p *Player) {
+func (a *Area) RemPlayer(p *player) {
 	index := slices.Index(a.Players, p)
 	a.Players = slices.Delete(a.Players, index, index+1)
 }

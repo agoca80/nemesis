@@ -12,7 +12,7 @@ const (
 	attack_transformation = "transformation"
 )
 
-func attackByte(i *Intruder, p *Player) {
+func attackByte(i *Intruder, p *player) {
 	Show(i, "bytes", p, "!")
 	if len(p.Wounds) == 2 {
 		p.Dies()
@@ -21,7 +21,7 @@ func attackByte(i *Intruder, p *Player) {
 	}
 }
 
-func attackClaws(i *Intruder, p *Player) {
+func attackClaws(i *Intruder, p *player) {
 	Show(i, "attacks", p, "with its claws!")
 	p.Discard(contamination.Draw())
 	p.SuffersLightWound()
@@ -30,7 +30,7 @@ func attackClaws(i *Intruder, p *Player) {
 	}
 }
 
-func attackFrenzy(i *Intruder, p *Player) {
+func attackFrenzy(i *Intruder, p *player) {
 	Show(i, "in area", i.Area, "goes into a frenzy!!!")
 	for _, player := range i.Area.Players.Alive() {
 		if len(player.Wounds) < 2 {
@@ -41,13 +41,13 @@ func attackFrenzy(i *Intruder, p *Player) {
 	}
 }
 
-func attackMucosity(i *Intruder, p *Player) {
+func attackMucosity(i *Intruder, p *player) {
 	Show(i, "covers", p, " in mucus!")
 	p.Discard(contamination.Draw())
 	p.IsDrenched = true
 }
 
-func attackRecall(i *Intruder, p *Player) {
+func attackRecall(i *Intruder, p *player) {
 	token := game.FetchToken()
 	if token.Kind == token_blank {
 		Show(i, "in area calls for friends, but it has no effect.")
@@ -57,13 +57,13 @@ func attackRecall(i *Intruder, p *Player) {
 	}
 }
 
-func attackScratch(i *Intruder, p *Player) {
+func attackScratch(i *Intruder, p *player) {
 	Show(i, "scratches", p, "!")
 	p.Discard(contamination.Draw())
 	p.SuffersLightWound()
 }
 
-func attackTail(i *Intruder, p *Player) {
+func attackTail(i *Intruder, p *player) {
 	Show(i, "atacks", p, "with its tail!")
 	if len(p.Wounds) == 1 {
 		p.Dies()
@@ -72,7 +72,7 @@ func attackTail(i *Intruder, p *Player) {
 	}
 }
 
-func attackTransformation(i *Intruder, p *Player) {
+func attackTransformation(i *Intruder, p *player) {
 	breeders := 0
 	for _, intruder := range game.Intruders {
 		if intruder.Kind == breeder {
@@ -93,8 +93,8 @@ func attackTransformation(i *Intruder, p *Player) {
 	}
 }
 
-func ResolveIntruderAttack(i *Intruder, p *Player) {
-	effect := map[string]func(*Intruder, *Player){
+func ResolveIntruderAttack(i *Intruder, p *player) {
+	effect := map[string]func(*Intruder, *player){
 		attack_claws:          attackClaws,
 		attack_frenzy:         attackFrenzy,
 		attack_tail:           attackTail,
@@ -148,7 +148,7 @@ const (
 	damage_double  = "double"
 )
 
-func (p *Player) RollDamage() (result string) {
+func (p *player) RollDamage() (result string) {
 	damageDice := Symbols{
 		damage_blank,
 		damage_crawler,

@@ -5,10 +5,17 @@ import (
 	"strconv"
 )
 
-type Player struct {
+type Controller interface {
+	Choose(cards Cards) (selected, rejected Card)
+	NextAction(Actions) Action
+}
+
+type player struct {
 	*Area
 	*Deck
 	*HelpCard
+
+	Controller
 
 	Bruises   int
 	Id        int
@@ -24,26 +31,45 @@ type Player struct {
 	State      string
 }
 
-type Players []*Player
+type Players []*player
 
 var playerId = 0
 
-func NewPlayer() *Player {
+func NewPlayer(kind string) *player {
 	playerId++
-	return &Player{
-		Id:     playerId,
-		Goals:  Cards{},
-		Hand:   Cards{},
-		Wounds: Cards{},
-		State:  player_alive,
+	var newController func() Controller
+	if kind == "human" {
+		newController = newHuman
+	} else {
+		newController = newDummy
+	}
+
+	return &player{
+		Controller: newController(),
+		Id:         playerId,
+		Goals:      Cards{},
+		Hand:       Cards{},
+		Wounds:     Cards{},
+		State:      player_alive,
 	}
 }
 
-func (p *Player) String() string {
+func (p *player) ChooseCharacter() (rejected Card) {
+	characters := Cards{
+		characters.Random(),
+		characters.Random(),
+	}
+	selected, rejected := p.Choose(characters)
+	p.Character = selected.Name()
+	Show("Player", p.Id, "picks", selected, "between", characters)
+	return
+}
+
+func (p *player) String() string {
 	return p.Character
 }
 
-func (p *Player) HandCapacity() int {
+func (p *player) HandCapacity() int {
 	if p.HasWound(wound_body) {
 		return 4
 	} else {
@@ -51,17 +77,17 @@ func (p *Player) HandCapacity() int {
 	}
 }
 
-func (p *Player) HandSize() int {
+func (p *player) HandSize() int {
 	return len(p.Hand)
 }
 
-func (p *Player) DrawActions() {
+func (p *player) DrawActions() {
 	for p.HandSize() < p.HandCapacity() {
 		p.Hand = append(p.Hand, p.Draw())
 	}
 }
 
-func (p *Player) Passes() {
+func (p *player) Passes() {
 	Show(p, "passes")
 	p.Flips()
 	if p.Area.IsInFire {
@@ -73,16 +99,16 @@ func (p *Player) Passes() {
 	}
 }
 
-func (p *Player) HasPassed() bool {
+func (p *player) HasPassed() bool {
 	return p.Flipped
 }
 
-func (p *Player) SuffersContamination() {
+func (p *player) SuffersContamination() {
 	Show(p, "suffers contamination!")
 	p.Discard(contamination.Draw())
 }
 
-func (p *Player) SuffersLightWound() {
+func (p *player) SuffersLightWound() {
 	if len(p.Wounds) == 3 {
 		p.Dies()
 		return
@@ -97,7 +123,7 @@ func (p *Player) SuffersLightWound() {
 	}
 }
 
-func (p *Player) SufferSeriousWound() {
+func (p *player) SufferSeriousWound() {
 	if len(p.Wounds) == 3 {
 		p.Dies()
 		return
@@ -108,21 +134,21 @@ func (p *Player) SufferSeriousWound() {
 	Show(p, "suffers", card.name, "!")
 }
 
-func (p *Player) IsSurprised(token *IntruderToken) bool {
+func (p *player) IsSurprised(token *IntruderToken) bool {
 	return p.HandSize() < token.Alert
 }
 
-func (p *Player) IsInCombat() bool {
+func (p *player) IsInCombat() bool {
 	return len(p.Area.Intruders) > 0
 }
 
-func (p *Player) HasWound(name string) bool {
+func (p *player) HasWound(name string) bool {
 	return slices.ContainsFunc(p.Wounds, func(w Card) bool {
 		return w.Name() == name && !w.(*SeriousWound).isDressed
 	})
 }
 
-func (p *Player) RollNoise() (result string) {
+func (p *player) RollNoise() (result string) {
 	noiseDice := Symbols{
 		silence,
 		danger,
@@ -164,12 +190,12 @@ func (p Players) PassJonesy() (new int) {
 	return new
 }
 
-func (p *Player) Dies() {
+func (p *player) Dies() {
 	p.State = player_dead
 	Show(p, "dies!")
 }
 
-func (p *Player) Alive() bool {
+func (p *player) Alive() bool {
 	return p.State == player_alive
 }
 
@@ -182,7 +208,7 @@ func (p Players) Alive() (players Players) {
 	return
 }
 
-func (p *Player) GoingOn() bool {
+func (p *player) GoingOn() bool {
 	return p.State == player_alive && !p.HasPassed()
 }
 
@@ -195,7 +221,7 @@ func (p Players) GoingOn() (players Players) {
 	return
 }
 
-func (p *Player) ResolveNoise() {
+func (p *player) ResolveNoise() {
 	encounter := false
 	result := p.RollNoise()
 	if result == ev_silence && p.IsDrenched {
@@ -225,5 +251,12 @@ func (p *Player) ResolveNoise() {
 
 	if encounter {
 		game.ResolveEncounter(p)
+	}
+}
+
+func (p *player) AvailableActions() Actions {
+	return Actions{
+		ActionBasic(basic_move),
+		ActionBasic(basic_fire),
 	}
 }

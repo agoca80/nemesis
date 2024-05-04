@@ -90,7 +90,9 @@ func (game *Game) Prepare(coop bool) {
 
 	// Crew preparation step 17
 	for _, p := range game.Players {
-		p.chooseCharacter(characters)
+		rejected := p.ChooseCharacter()
+		characters.Return(rejected)
+		characters.Shuffle()
 	}
 
 	// Crew preparation step 18

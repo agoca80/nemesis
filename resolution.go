@@ -2,13 +2,7 @@ package main
 
 import "slices"
 
-type Action interface {
-	Name() string
-	Cost() int
-	Resolve(map[string]interface{})
-}
-
-func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
+func (player *player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	moiseRoll = dstArea.IsEmpty()
 	srcArea := player.Area
 	srcArea.RemPlayer(player)
@@ -17,7 +11,7 @@ func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	return
 }
 
-func (player *Player) ResolveMove(corridor *Corridor) {
+func (player *player) ResolveMove(corridor *Corridor) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
 		player.Area.Intruders.Attack(player)
@@ -45,7 +39,7 @@ func (player *Player) ResolveMove(corridor *Corridor) {
 }
 
 func (a ActionBasic) Resolve(data map[string]interface{}) {
-	player := data["player"].(*Player)
+	player := data["player"].(*player)
 	switch string(a) {
 	case basic_move:
 		corridor := data["corridor"].(*Corridor)
@@ -55,7 +49,7 @@ func (a ActionBasic) Resolve(data map[string]interface{}) {
 	}
 }
 
-func (p *Player) Pay(card Card) {
+func (p *player) Pay(card Card) {
 	index := slices.Index(p.Hand, card)
 	if index == -1 {
 		panic("WTF")
@@ -64,8 +58,8 @@ func (p *Player) Pay(card Card) {
 	p.Discard(card)
 }
 
-func (g *Game) AskAction(player *Player) {
-	actionData := player.NewAction()
+func (g *Game) AskAction(player *player) {
+	actionData := player.NextAction()
 	if actionData == nil {
 		player.Passes()
 		return
