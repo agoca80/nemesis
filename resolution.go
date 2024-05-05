@@ -57,22 +57,3 @@ func (p *player) Pay(card Card) {
 	p.Hand = slices.Delete(p.Hand, index, index+1)
 	p.Discard(card)
 }
-
-func (g *Game) AskAction(player *player) {
-	actionData := player.NextAction()
-	if actionData == nil {
-		player.Passes()
-		return
-	}
-
-	cost := actionData["cost"].(Cards)
-	for _, card := range cost {
-		player.Pay(card)
-	}
-
-	action := actionData["action"].(Action)
-	action.Resolve(actionData)
-	game.Board.Show()
-	player.Show()
-	Wait()
-}

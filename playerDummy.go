@@ -4,6 +4,22 @@ import (
 	"math/rand"
 )
 
+func (p *Dummy) NextAction(availableActions Actions) (action Action) {
+	if p.HandSize() < 1 {
+		return
+	}
+
+	action = &struct {
+		Action
+		Data map[string]interface{}
+	}{
+		Action: ActionBasic(basic_move),
+		Data: map[string]interface{}{
+			"corridor": p.chooseCorridor(),
+		},
+	}
+}
+
 type Dummy struct {
 	*player
 }
@@ -26,18 +42,4 @@ func (p *Dummy) chooseCorridor() *Corridor {
 		}
 	}
 	return options[rand.Intn(len(options))]
-}
-
-func (p *Dummy) NextAction() (action map[string]interface{}) {
-	if p.HandSize() < 1 {
-		return
-	}
-
-	return map[string]interface{}{
-		"action":   ActionBasic(basic_move),
-		"corridor": p.chooseCorridor(),
-		"cost": Cards{
-			p.Hand[0],
-		},
-	}
 }

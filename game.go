@@ -6,6 +6,24 @@ import (
 	"strings"
 )
 
+func (game *Game) AskAction(player *player) {
+	availableActions := game.AvailableActions(player)
+	action := player.NextAction(availableActions)
+	if action == nil {
+		player.Passes()
+		return
+	}
+
+	for _, card := range action.Cost() {
+		player.Pay(card)
+	}
+
+	action.Resolve()
+	game.Board.Show()
+	player.Show()
+	Wait()
+}
+
 type Game struct {
 	Intruders
 	Players

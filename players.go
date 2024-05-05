@@ -5,6 +5,14 @@ import (
 	"strconv"
 )
 
+func (game *Game) AvailableActions(p *player) (actions Actions) {
+	actions = Actions{
+		ActionBasic(basic_move),
+		ActionBasic(basic_fire),
+	}
+
+}
+
 type Controller interface {
 	Choose(cards Cards) (selected, rejected Card)
 	NextAction(Actions) Action
@@ -251,12 +259,5 @@ func (p *player) ResolveNoise() {
 
 	if encounter {
 		game.ResolveEncounter(p)
-	}
-}
-
-func (p *player) AvailableActions() Actions {
-	return Actions{
-		ActionBasic(basic_move),
-		ActionBasic(basic_fire),
 	}
 }

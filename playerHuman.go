@@ -41,7 +41,7 @@ func (h *Human) Choose(cards Cards) (selected, rejected Card) {
 
 func (h *Human) askAction(options Actions) Action {
 	option := map[int]Action{}
-	for i, ca := range actions {
+	for i, ca := range options {
 		option[i] = ca
 		actionStr := fmt.Sprintf("%c - %s(%d)\n", 'a'+i, ca.Name(), ca.Cost())
 		Show(actionStr)
