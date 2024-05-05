@@ -118,7 +118,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 		return
 	}
 
-	attack := attacks.Next().(*AttackCard)
+	attack := attacks.Next().(*Attack)
 	if !attack.Includes(i.Kind) {
 		Show(i, "attacks", p, "but fails!")
 		return
@@ -131,11 +131,11 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 	}
 }
 
-func (a *AttackCard) Retreats() bool {
+func (a *Attack) Retreats() bool {
 	return a.Wounds == 0
 }
 
-func (a *AttackCard) String() string {
+func (a *Attack) String() string {
 	return a.card.name
 }
 

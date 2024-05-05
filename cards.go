@@ -7,25 +7,25 @@ type ActionCard struct {
 	cost int
 }
 
-type AttackCard struct {
+type Attack struct {
 	*card
 	Wounds int
 	Symbols
 }
 
-type ContaminationCard struct {
+type Contamination struct {
 	*card
 	Infected Issue
 }
 
-func newContamination(infected bool) *ContaminationCard {
-	return &ContaminationCard{
+func newContamination(infected bool) *Contamination {
+	return &Contamination{
 		card:     newCard("contamination"),
 		Infected: Issue(infected),
 	}
 }
 
-func (c *ContaminationCard) Reveal() string {
+func (c *Contamination) Reveal() string {
 	if c.Infected {
 		return "infected"
 	} else {
@@ -38,7 +38,7 @@ type Coordinates struct {
 	coordinates string
 }
 
-type EventCard struct {
+type Event struct {
 	*card
 	Corridor int
 	Symbols
@@ -65,7 +65,7 @@ type IntruderToken struct {
 
 type IntruderTokens []*IntruderToken
 
-type ItemCard struct {
+type Item struct {
 	*card
 	Color     string
 	SingleUse bool
@@ -85,8 +85,8 @@ type Weakness struct {
 	Revealed bool
 }
 
-func newAttack(wounds int, name string, symbols ...string) *AttackCard {
-	return &AttackCard{
+func newAttack(wounds int, name string, symbols ...string) *Attack {
+	return &Attack{
 		card:    newCard(name),
 		Wounds:  wounds,
 		Symbols: symbols,
@@ -117,8 +117,8 @@ func (c *Coordinates) String() (str string) {
 	return
 }
 
-func newEvent(corridor int, name string, symbols ...string) *EventCard {
-	return &EventCard{
+func newEvent(corridor int, name string, symbols ...string) *Event {
+	return &Event{
 		card:     newCard(name),
 		Corridor: corridor,
 		Symbols:  symbols,
@@ -171,15 +171,15 @@ func newRoom(name, color string, computer bool) *Room {
 	}
 }
 
-type SeriousWound struct {
+type Wound struct {
 	*card
 	isDressed bool
 }
 
-type SeriousWounds []*SeriousWound
+type Wounds []*Wound
 
-func newWound(name string) *SeriousWound {
-	return &SeriousWound{
+func newWound(name string) *Wound {
+	return &Wound{
 		card: newCard(name),
 	}
 }

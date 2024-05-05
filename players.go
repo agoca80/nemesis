@@ -103,7 +103,7 @@ func (p *Player) SufferSeriousWound() {
 		return
 	}
 
-	card := wounds.Draw().(*SeriousWound)
+	card := wounds.Draw().(*Wound)
 	p.Wounds = append(p.Wounds, card)
 	Show(p, "suffers", card.name, "!")
 }
@@ -118,7 +118,7 @@ func (p *Player) IsInCombat() bool {
 
 func (p *Player) HasWound(name string) bool {
 	return slices.ContainsFunc(p.Wounds, func(w Card) bool {
-		return w.Name() == name && !w.(*SeriousWound).isDressed
+		return w.Name() == name && !w.(*Wound).isDressed
 	})
 }
 

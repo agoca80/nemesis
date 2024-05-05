@@ -12,7 +12,7 @@ func (i *Intruder) Show() string {
 	return fmt.Sprintf("%v%d,%d", i.Kind, i.Id, i.Wounds)
 }
 
-func (c *ContaminationCard) Show() string {
+func (c *Contamination) Show() string {
 	return c.Infected.String()
 }
 
