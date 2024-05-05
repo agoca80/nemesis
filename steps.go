@@ -36,19 +36,13 @@ func (g *Game) stepTurn() Step {
 	game.Ship.Show()
 	round := func(players Players) (goingOn Players) {
 		for _, player := range players {
-			if player.GoingOn() {
-				g.AskAction(player)
+			if player.NextAction() {
+				player.NextAction()
 			}
+
 			if game.Over() {
 				return
 			}
-			if player.GoingOn() {
-				g.AskAction(player)
-			}
-		}
-
-		if game.Over() {
-			return
 		}
 
 		return players.GoingOn()

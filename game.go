@@ -6,6 +6,33 @@ import (
 	"strings"
 )
 
+func (player *Player) NextAction() (goOn bool) {
+	if !player.GoingOn() {
+		return
+	}
+
+	actionData := player.NewAction()
+	if actionData == nil {
+		player.Passes()
+		return
+	}
+
+	cost := actionData["cost"].(Cards)
+	for _, card := range cost {
+		player.Pay(card)
+	}
+
+	action := actionData["action"].(Action)
+	action.Resolve(actionData)
+	Show()
+
+	game.Ship.Show()
+	player.Show()
+	Wait()
+
+	return true
+}
+
 type Game struct {
 	Intruders
 	Players
