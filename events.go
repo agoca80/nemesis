@@ -4,6 +4,7 @@ func eventFailure(event *Event) {
 	for _, a := range ship.Area[A01:A21] {
 		if a.IsExplored() {
 			a.IsDamaged = true
+			break
 		}
 	}
 	events.Return(event)

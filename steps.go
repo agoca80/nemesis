@@ -56,7 +56,8 @@ func (g *Game) counters() Step {
 	Show("Hyperdrive countdown:", game.hyperdriveCountdown)
 
 	if game.hyperdriveCountdown == 8 {
-		Pending("The hibernatorium chambers are open again!")
+		Show("Hibernatorium chambers are open again...")
+		ship.hibernatoriumOpen = true
 	}
 
 	return step_attack

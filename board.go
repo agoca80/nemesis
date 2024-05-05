@@ -113,7 +113,8 @@ type Gates []*struct {
 }
 
 type Ship struct {
-	Area []*Area
+	Area              []*Area
+	hibernatoriumOpen bool
 }
 
 func newShip() (b *Ship) {
