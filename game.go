@@ -17,12 +17,11 @@ func (player *Player) NextAction() (goOn bool) {
 		return
 	}
 
-	cost := action.data["cost"].(Cards)
-	for _, card := range cost {
-		player.Pay(card)
-	}
+	// for _, card := range action.Cost() {
+	// 	player.Discard(card)
+	// }
 
-	action.Resolve(action.data)
+	action.Resolve()
 	Show()
 
 	game.Ship.Show()

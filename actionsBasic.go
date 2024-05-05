@@ -1,13 +1,19 @@
 package main
 
-type ActionBasic string
-
-func (a ActionBasic) Name() string {
-	return string(a)
+type ActionBasic struct {
+	name string
 }
 
-func (a ActionBasic) Cost() int {
-	cost := map[ActionBasic]int{
+func newActionBasic(name string) *ActionBasic {
+	return &ActionBasic{name: name}
+}
+
+func (a *ActionBasic) Name() string {
+	return a.name
+}
+
+func (a *ActionBasic) Cost() int {
+	cost := map[string]int{
 		basic_move:     1,
 		basic_fire:     1,
 		basic_fight:    1,
@@ -17,15 +23,14 @@ func (a ActionBasic) Cost() int {
 		basic_sneak:    1,
 	}
 
-	return cost[a]
+	return cost[a.name]
 }
 
-func (a ActionBasic) Resolve(actionData actionData) {
-	player := actionData["player"].(*Player)
-	resolve := map[string]func(actionData){
+func (a *ActionBasic) Resolve(player *Player, d data) {
+	resolve := map[string]func(data){
 		basic_move: player.ResolveMove,
 		basic_fire: player.ResolveFire,
 	}
 
-	resolve[string(a)](actionData)
+	resolve[a.name](d)
 }

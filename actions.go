@@ -1,14 +1,22 @@
 package main
 
-type actionData map[string]interface{}
+type Action interface {
+	Player() *Player
+	Name() string
+	Resolve()
+	Cost() Cards
+}
+
+type data map[string]interface{}
 
 type action struct {
 	Action
-	player *Player
-	data   actionData
+	Cost Cards
+	*Player
+	data data
 }
 
-func (player *Player) ResolveMove(data actionData) {
+func (player *Player) ResolveMove(data data) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
 		game.Intruders.Attack(player)
@@ -36,8 +44,8 @@ func (player *Player) ResolveMove(data actionData) {
 	}
 }
 
-func (player *Player) ResolveFire(actionData actionData) {
-	intruder := actionData["intruder"].(*Intruder)
+func (player *Player) ResolveFire(data data) {
+	intruder := data["intruder"].(*Intruder)
 
 	var damage int
 	var roll = player.RollDamage()

@@ -2,12 +2,6 @@ package main
 
 import "slices"
 
-type Action interface {
-	Name() string
-	Cost() int
-	Resolve(map[string]interface{})
-}
-
 func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	moiseRoll = dstArea.IsEmpty()
 	srcArea := player.Area
