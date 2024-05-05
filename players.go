@@ -266,8 +266,8 @@ func (player *Player) NextAction() {
 	}
 
 	resolveAction(action)
+	Show()
 	game.Board.Show()
 	player.Show()
-	Show()
 	Wait()
 }

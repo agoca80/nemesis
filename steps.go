@@ -145,7 +145,7 @@ func (g *Game) evolution() Step {
 			game.Eggs++
 		} else {
 			Show("The queen show its might!")
-			intruder := NewIntruder(token, nest)
+			intruder := spawnIntruder(token, nest)
 			intruder.Attack()
 		}
 	}

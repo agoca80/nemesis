@@ -8,9 +8,19 @@ const (
 // weakness_egg
 )
 
+var intruderIds = map[string]int{
+	intruder_egg:     0,
+	intruder_larva:   0,
+	intruder_crawler: 0,
+	intruder_adult:   0,
+	intruder_breeder: 0,
+	intruder_queen:   0,
+}
+
 type Intruder struct {
 	*Area
 
+	Id     int
 	Kind   string
 	Wounds int
 	Dead   bool
@@ -76,19 +86,21 @@ func (i Intruders) Attack(p *Player) {
 	}
 }
 
-func SpawnIntruder(kind string, area *Area) (i *Intruder) {
+func newIntruder(kind string, area *Area) (i *Intruder) {
 	Show(kind, "appears in", area, "!")
 	i = &Intruder{
+		Id:   intruderIds[kind],
 		Area: area,
 		Kind: kind,
 	}
+	intruderIds[kind]++
 	game.Intruders = append(game.Intruders, i)
 	area.Intruders = append(area.Intruders, i)
 	return
 }
 
-func NewIntruder(token *IntruderToken, area *Area) (i *Intruder) {
-	i = SpawnIntruder(token.Kind, area)
+func spawnIntruder(token *IntruderToken, area *Area) (i *Intruder) {
+	i = newIntruder(token.Kind, area)
 	game.Retire(token)
 	return
 }

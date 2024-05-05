@@ -53,7 +53,7 @@ func attackRecall(i *Intruder, p *Player) {
 		Show(i, "in area calls for friends, but it has no effect.")
 	} else {
 		Show(i, "in area calls for friends!")
-		NewIntruder(token, p.Area)
+		spawnIntruder(token, p.Area)
 	}
 }
 
@@ -87,7 +87,7 @@ func attackTransformation(i *Intruder, p *Player) {
 
 	Show(i, "convulses and transforms into an effing breeder!")
 	RemIntruder(i)
-	transformed := SpawnIntruder(intruder_breeder, p.Area)
+	transformed := newIntruder(intruder_breeder, p.Area)
 	if p.HandSize() == 0 {
 		ResolveIntruderAttack(transformed, p)
 	}

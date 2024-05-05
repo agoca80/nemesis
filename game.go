@@ -53,7 +53,7 @@ func (game *Game) ResolveEncounter(p *Player) {
 		return
 	}
 
-	intruder := NewIntruder(token, p.Area)
+	intruder := spawnIntruder(token, p.Area)
 	if p.IsSurprised(token) {
 		Show(p, "is surprised by", intruder)
 		ResolveIntruderAttack(intruder, p)
