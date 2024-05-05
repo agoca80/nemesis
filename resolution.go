@@ -51,9 +51,6 @@ func (a ActionBasic) Resolve(data map[string]interface{}) {
 
 func (p *Player) Pay(card Card) {
 	index := slices.Index(p.Hand, card)
-	if index == -1 {
-		panic("WTF")
-	}
 	p.Hand = slices.Delete(p.Hand, index, index+1)
 	p.Discard(card)
 }
@@ -61,7 +58,7 @@ func (p *Player) Pay(card Card) {
 func resolveAction(action *Action) {
 	player := action.Player
 	for _, card := range action.Cost {
-		player.Discard(card)
+		player.Pay(card)
 	}
 
 	switch action.Name {

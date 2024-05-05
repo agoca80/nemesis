@@ -25,9 +25,9 @@ func (p *Player) chooseCorridor() *Corridor {
 	return options[rand.Intn(len(options))]
 }
 
-func (player *Player) NewAction() *Action {
+func (player *Player) NewAction() (action *Action) {
 	if player.HandSize() < 1 {
-		return nil
+		return
 	}
 
 	var name string
@@ -45,10 +45,12 @@ func (player *Player) NewAction() *Action {
 		}
 	}
 
-	return &Action{
+	action = &Action{
 		Cost:   Cards{player.Hand[rand.Intn(len(player.Hand))]},
 		Player: player,
 		Name:   name,
 		Data:   data,
 	}
+
+	return action
 }
