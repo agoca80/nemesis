@@ -6,11 +6,14 @@ import (
 	"strings"
 )
 
+var (
+	board   *Board
+	players Players
+)
+
 type Game struct {
 	Intruders
-	Players
 
-	*Board
 	*IntruderBag
 
 	// Decks
@@ -28,18 +31,18 @@ type Game struct {
 	Weakness            []*Weakness
 }
 
-func newGame(players int) (game *Game) {
-	game = &Game{
-		Players: Players{},
+func newGame(numPlayers int) (game *Game) {
+	players = Players{}
 
+	game = &Game{
 		GoalsCoop: newDeck(goalsCoop),
-		GoalsCorp: newDeck(goalsCorp[:players+4]),
-		GoalsPriv: newDeck(goalsPriv[:players+4]),
-		HelpDeck:  newDeck(helpCards[:players]),
+		GoalsCorp: newDeck(goalsCorp[:numPlayers+4]),
+		GoalsPriv: newDeck(goalsPriv[:numPlayers+4]),
+		HelpDeck:  newDeck(helpCards[:numPlayers]),
 	}
 
-	for range players {
-		game.Players = append(game.Players, NewPlayer())
+	for range numPlayers {
+		players = append(players, NewPlayer())
 	}
 
 	return
@@ -117,8 +120,8 @@ func (i *Intruder) FireDamage(damage int) {
 	i.Suffers(damage)
 }
 
-func (g *Game) Over() bool {
-	return g.Destroyed() || len(g.Players.Alive()) == 0 || g.hyperdriveCountdown == 0
+func gameOver() bool {
+	return board.Destroyed() || len(players.Alive()) == 0 || game.hyperdriveCountdown == 0
 }
 
 func (game *Game) Run() {
@@ -134,7 +137,7 @@ func (game *Game) Run() {
 	}
 
 	s := Step(step_draw)
-	for !game.Over() {
+	for !gameOver() {
 		Show(strings.Repeat("-", 58))
 		Show(strings.ToUpper(string(s)))
 		Show()

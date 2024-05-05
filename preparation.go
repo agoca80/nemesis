@@ -6,24 +6,24 @@ import (
 
 func (game *Game) Prepare(coop bool) {
 	// Prepare 1
-	game.Board = NewBoard()
+	board = NewBoard()
 
 	// Prepare 2
-	for _, a := range game.Area {
+	for _, a := range board.Area {
 		if a.Class == room_2 {
 			a.Room = rooms2.Draw().(*Room)
 		}
 	}
 
 	// Prepare 3
-	for _, a := range game.Area {
+	for _, a := range board.Area {
 		if a.Class == room_1 {
 			a.Room = rooms1.Draw().(*Room)
 		}
 	}
 
 	// Prepare 4
-	for _, a := range game.Area {
+	for _, a := range board.Area {
 		if a.Class == room_1 || a.Class == room_2 {
 			a.ExplorationToken = explorationTokens.Draw().(*ExplorationToken)
 		}
@@ -63,24 +63,24 @@ func (game *Game) Prepare(coop bool) {
 	}
 
 	// Initialize intruder bag
-	game.IntruderBag = NewIntruderBag(len(game.Players))
+	game.IntruderBag = NewIntruderBag(len(players))
 
 	// Initialize hyperdrive countdown
 	game.hyperdriveCountdown = 15
 
 	// Crew preparation step 18 A,B,C
-	for _, p := range game.Players {
-		p.Area, game.Area[A11].Players = game.Area[A11], append(game.Area[A11].Players, p)
+	for _, p := range players {
+		p.Area, board.Area[A11].Players = board.Area[A11], append(board.Area[A11].Players, p)
 	}
 
 	// Crew preparation step 14
-	helpDeck := newDeck(helpCards[:len(game.Players)])
-	for _, p := range game.Players {
+	helpDeck := newDeck(helpCards[:len(players)])
+	for _, p := range players {
 		p.HelpCard = helpDeck.Draw().(*HelpCard)
 	}
 
 	// Crew preparation step 16
-	for _, p := range game.Players {
+	for _, p := range players {
 		if coop {
 			p.Goals = append(p.Goals, game.GoalsCoop.Draw())
 		} else {
@@ -89,17 +89,17 @@ func (game *Game) Prepare(coop bool) {
 	}
 
 	// Crew preparation step 17
-	for _, p := range game.Players {
+	for _, p := range players {
 		p.chooseCharacter(characters)
 	}
 
 	// Crew preparation step 18
-	for _, p := range game.Players {
+	for _, p := range players {
 		p.Deck = actions[p.Character]
 	}
 
 	// Step 19
-	for _, p := range game.Players {
+	for _, p := range players {
 		if p.Number == 1 {
 			p.Jonesy = true
 		}

@@ -253,7 +253,7 @@ func (player *Player) ResolveFire(intruder *Intruder) {
 }
 
 func (player *Player) NextAction() {
-	if game.Over() || !player.GoingOn() {
+	if gameOver() || !player.GoingOn() {
 		return
 	}
 
@@ -265,7 +265,7 @@ func (player *Player) NextAction() {
 
 	resolveAction(action)
 	Show()
-	game.Board.Show()
+	board.Show()
 	player.Show()
 	Wait()
 }

@@ -3,7 +3,7 @@ package main
 import "slices"
 
 func (g *Game) draw() Step {
-	for _, p := range game.Players {
+	for _, p := range players.Alive() {
 		p.DrawActions()
 	}
 	return step_token
@@ -11,38 +11,33 @@ func (g *Game) draw() Step {
 
 func (g *Game) token() Step {
 	if game.hyperdriveCountdown < 15 {
-		game.PassJonesy()
+		players.PassJonesy()
 	}
 
 	var first int
-	for i, p := range game.Players {
+	for i, p := range players {
 		if p.Jonesy {
 			first = i
 			break
 		}
 	}
 
-	players := Players{}
-	for i := range game.Players {
-		next := (first + i) % len(game.Players)
-		players = append(players, game.Players[next])
-	}
-	game.Players = players
+	players = append(players[first:], players[:first]...)
 	players.Alive().Show()
 	return step_turn
 }
 
 func (g *Game) stepTurn() Step {
-	for _, p := range game.Players.Alive() {
+	for _, p := range players.Alive() {
 		p.Unflips()
 	}
 
 	for {
-		if game.Over() {
+		if gameOver() {
 			break
 		}
 
-		goingOn := game.Players.GoingOn()
+		goingOn := players.GoingOn()
 		if len(goingOn) == 0 {
 			break
 		}
@@ -78,7 +73,7 @@ func (g *Game) stepAttacks() Step {
 }
 
 func (g *Game) fireDamage() Step {
-	for _, a := range game.Area {
+	for _, a := range board.Area {
 		if !a.IsInFire {
 			continue
 		}
@@ -106,8 +101,8 @@ func (g *Game) event() Step {
 
 func (g *Game) evolution() Step {
 	rollNoise := func() {
-		Show("All players roll noise in turn order")
-		for _, p := range game.Players.Alive() {
+		Show("All non-combating players roll noise in turn order")
+		for _, p := range players.Alive() {
 			if !p.IsInCombat() {
 				p.RollNoise()
 			}
@@ -133,7 +128,7 @@ func (g *Game) evolution() Step {
 		rollNoise()
 	case token_queen:
 		var nest *Area
-		for _, a := range game.Area {
+		for _, a := range board.Area {
 			if a.Name() == room_nest {
 				nest = a
 				break
@@ -151,4 +146,12 @@ func (g *Game) evolution() Step {
 	}
 
 	return step_draw
+}
+
+func finish() {
+	Show()
+	Show("GAME OVER!!!")
+	Show()
+	board.Show()
+	players.Show()
 }

@@ -29,7 +29,7 @@ func (player *Player) ResolveMove(corridor *Corridor) {
 		event = game.ResolveExploration(player, corridor)
 	}
 
-	if game.Destroyed() {
+	if board.Destroyed() {
 		return
 	}
 

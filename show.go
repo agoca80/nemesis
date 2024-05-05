@@ -99,11 +99,6 @@ func (b *Board) Show() {
 	Show()
 }
 
-func (game *Game) Show() {
-	game.Players.Show()
-	game.Board.Show()
-}
-
 func Show(args ...interface{}) {
 	fmt.Println(args...)
 }
