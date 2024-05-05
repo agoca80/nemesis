@@ -75,7 +75,7 @@ func attackTail(i *Intruder, p *Player) {
 func attackTransformation(i *Intruder, p *Player) {
 	breeders := 0
 	for _, intruder := range game.Intruders {
-		if intruder.Kind == breeder {
+		if intruder.Kind == intruder_breeder {
 			breeders++
 		}
 	}
@@ -87,7 +87,7 @@ func attackTransformation(i *Intruder, p *Player) {
 
 	Show(i, "convulses and transforms into an effing breeder!")
 	RemIntruder(i)
-	transformed := SpawnIntruder(breeder, p.Area)
+	transformed := SpawnIntruder(intruder_breeder, p.Area)
 	if p.HandSize() == 0 {
 		ResolveIntruderAttack(transformed, p)
 	}
@@ -110,7 +110,12 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 		return
 	}
 
-	if i.Kind == larva {
+	if i.Area != p.Area {
+		// Show(i, "was going to attack", p, "but they are in different areas!")
+		return
+	}
+
+	if i.Kind == intruder_larva {
 		Show(i, "infestes", p, "!")
 		p.IsInfected = true
 		p.SuffersContamination()
@@ -118,7 +123,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 		return
 	}
 
-	attack := attacks.Next().(*AttackCard)
+	attack := attacks.Next().(*Attack)
 	if !attack.Includes(i.Kind) {
 		Show(i, "attacks", p, "but fails!")
 		return
@@ -131,11 +136,11 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 	}
 }
 
-func (a *AttackCard) Retreats() bool {
+func (a *Attack) Retreats() bool {
 	return a.Wounds == 0
 }
 
-func (a *AttackCard) String() string {
+func (a *Attack) String() string {
 	return a.card.name
 }
 
@@ -150,10 +155,10 @@ const (
 
 func (p *Player) RollDamage() (result string) {
 	damageDice := Symbols{
-		damage_blank,
-		damage_crawler,
-		damage_crawler,
-		damage_adult,
+		intruder_blank,
+		intruder_crawler,
+		intruder_crawler,
+		intruder_adult,
 		damage_single,
 		damage_double,
 	}

@@ -7,7 +7,18 @@ type ActionCard struct {
 	cost int
 }
 
-type AttackCard struct {
+func NewActionCard(cost int, name string) *ActionCard {
+	return &ActionCard{
+		card: newCard(name),
+		cost: cost,
+	}
+}
+
+func (ac *ActionCard) Cost() int {
+	return ac.cost
+}
+
+type Attack struct {
 	*card
 	Wounds int
 	Symbols
@@ -52,7 +63,7 @@ type Coordinates struct {
 	coordinates string
 }
 
-type EventCard struct {
+type Event struct {
 	*card
 	Corridor int
 	Symbols
@@ -99,8 +110,8 @@ type Weakness struct {
 	Revealed bool
 }
 
-func newAttack(wounds int, name string, symbols ...string) *AttackCard {
-	return &AttackCard{
+func newAttack(wounds int, name string, symbols ...string) *Attack {
+	return &Attack{
 		card:    newCard(name),
 		Wounds:  wounds,
 		Symbols: symbols,
@@ -131,8 +142,8 @@ func (c *Coordinates) String() (str string) {
 	return
 }
 
-func newEvent(corridor int, name string, symbols ...string) *EventCard {
-	return &EventCard{
+func newEvent(corridor int, name string, symbols ...string) *Event {
+	return &Event{
 		card:     newCard(name),
 		Corridor: corridor,
 		Symbols:  symbols,

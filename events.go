@@ -1,6 +1,6 @@
 package main
 
-func eventFailure(event *EventCard) {
+func eventFailure(event *Event) {
 	for _, a := range game.Area[A01:A21] {
 		if a.IsExplored() {
 			a.IsDamaged = true
@@ -10,8 +10,8 @@ func eventFailure(event *EventCard) {
 	events.Shuffle()
 }
 
-func ResolveEvent(event *EventCard) {
-	var effects = map[string]func(*EventCard){
+func ResolveEvent(event *Event) {
+	var effects = map[string]func(*Event){
 		event_failure: eventFailure,
 	}
 

@@ -96,7 +96,39 @@ func (i *Intruder) Dies() {
 }
 
 func (i *Intruder) Suffers(damage int) (dies bool) {
+	if damage == 0 {
+		return
+	}
+
+	if i.Kind == intruder_egg || i.Kind == intruder_larva {
+		i.Dies()
+		return true
+	}
+
+	check := 0
+	cards := []*Attack{}
+	switch {
+	case i.Kind == intruder_adult || i.Kind == intruder_crawler:
+		cards = append(cards, attacks.Next().(*Attack))
+		check = cards[0].Wounds
+	case i.Kind == intruder_breeder || i.Kind == intruder_queen:
+		cards = append(cards, attacks.Next().(*Attack))
+		cards = append(cards, attacks.Next().(*Attack))
+		check = cards[0].Wounds + cards[1].Wounds
+	}
+
 	i.Wounds += damage
-	Show("PENDING intruder suffers")
-	return i.Wounds > 1
+	for _, c := range cards {
+		if c.Retreats() {
+			Show(i, "in", i.Area, "retreats!")
+			direction := events.Next().(*Event)
+			i.Moves(direction.Corridor)
+			return
+		}
+	}
+
+	if dies = i.Wounds >= check; dies {
+		i.Dies()
+	}
+	return
 }

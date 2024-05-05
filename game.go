@@ -11,19 +11,18 @@ func (player *Player) NextAction() (goOn bool) {
 		return
 	}
 
-	actionData := player.NewAction()
-	if actionData == nil {
+	action := player.NewAction()
+	if action == nil {
 		player.Passes()
 		return
 	}
 
-	cost := actionData["cost"].(Cards)
+	cost := action.data["cost"].(Cards)
 	for _, card := range cost {
 		player.Pay(card)
 	}
 
-	action := actionData["action"].(Action)
-	action.Resolve(actionData)
+	action.Resolve(action.data)
 	Show()
 
 	game.Ship.Show()

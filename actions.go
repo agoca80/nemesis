@@ -1,32 +1,65 @@
 package main
 
-type ActionBasic string
+type actionData map[string]interface{}
 
-func (a ActionBasic) Name() string {
-	return string(a)
+type action struct {
+	Action
+	player *Player
+	data   actionData
 }
 
-func NewActionCard(cost int, name string) *ActionCard {
-	return &ActionCard{
-		card: newCard(name),
-		cost: cost,
+func (player *Player) ResolveMove(data actionData) {
+	if player.IsInCombat() {
+		Show(player, "tries to leave", player.Area)
+		game.Intruders.Attack(player)
+	}
+
+	if !player.Alive() {
+		return
+	}
+
+	corridor := data["corridor"].(*Corridor)
+	destination := corridor.End(player.Area)
+	noiseRoll := player.MovesTo(destination)
+
+	var event string
+	if !player.Area.IsExplored() {
+		event = game.ResolveExploration(player, corridor)
+	}
+
+	if game.Destroyed() {
+		return
+	}
+
+	if noiseRoll && event != ev_danger && event != ev_silence {
+		player.ResolveNoise()
 	}
 }
 
-func (ac *ActionCard) Cost() int {
-	return ac.cost
-}
+func (player *Player) ResolveFire(actionData actionData) {
+	intruder := actionData["intruder"].(*Intruder)
 
-func (a ActionBasic) Cost() int {
-	cost := map[ActionBasic]int{
-		basic_move:     1,
-		basic_fire:     1,
-		basic_fight:    1,
-		basic_pickup:   1,
-		basic_exchange: 1,
-		basic_prepare:  1,
-		basic_sneak:    1,
+	var damage int
+	var roll = player.RollDamage()
+	switch {
+	case roll == damage_double:
+		damage = 2
+	case roll == damage_single:
+		damage = 1
+	case roll == intruder.Kind:
+		damage = 1
+	case roll == intruder_adult && intruder.Kind == intruder_crawler:
+		damage = 1
+	case roll == intruder_adult && intruder.Kind == intruder_larva:
+		damage = 1
+	case roll == intruder_adult && intruder.Kind == intruder_egg:
+		damage = 1
+	case roll == intruder_blank:
+		damage = 0
 	}
 
-	return cost[a]
+	Show(player, "opens fire against", intruder, ", rolls", roll, ", deals", damage, "damage")
+	if intruder.Suffers(damage) {
+		Show(intruder, "dies!")
+	}
 }

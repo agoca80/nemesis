@@ -27,17 +27,35 @@ func (p *Player) chooseCorridor() *Corridor {
 	return options[rand.Intn(len(options))]
 }
 
-func (p *Player) NewAction() (actionData map[string]interface{}) {
+func (p *Player) NewAction() (action *action) {
 	if p.HandSize() < 1 {
 		return
 	}
 
-	return map[string]interface{}{
-		"player":   p,
-		"action":   ActionBasic(basic_move),
-		"corridor": p.chooseCorridor(),
-		"cost": Cards{
-			p.Hand[0],
-		},
+	switch {
+	case p.IsInCombat():
+		Show("Debug", p)
+		action = &action{
+			Action: ActionBasic(basic_fire),
+			data: actionData{
+				"intruder": p.Area.Intruders[rand.Intn(len(p.Area.Intruders))],
+				"cost": Cards{
+					p.Hand[0],
+				},
+			},
+		}
+	case !p.IsInCombat():
+		action = &action{
+			Action: ActionBasic(basic_move),
+			data: actionData{
+				"corridor": p.chooseCorridor(),
+				"cost": Cards{
+					p.Hand[0],
+				},
+			},
+		}
 	}
+
+	action.player = p
+	return action
 }

@@ -96,7 +96,7 @@ func (g *Game) fireDamage() Step {
 }
 
 func (g *Game) event() Step {
-	event := events.Draw().(*EventCard)
+	event := events.Draw().(*Event)
 	Show("Event card is", event.name)
 	for _, i := range game.Intruders {
 		if slices.Contains(event.Symbols, i.Kind) && !i.IsInCombat() {
