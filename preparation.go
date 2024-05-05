@@ -6,24 +6,24 @@ import (
 
 func (game *Game) Prepare(coop bool) {
 	// Prepare 1
-	board = NewBoard()
+	ship = newShip()
 
 	// Prepare 2
-	for _, a := range board.Area {
+	for _, a := range ship.Area {
 		if a.Class == room_2 {
 			a.Room = rooms2.Draw().(*Room)
 		}
 	}
 
 	// Prepare 3
-	for _, a := range board.Area {
+	for _, a := range ship.Area {
 		if a.Class == room_1 {
 			a.Room = rooms1.Draw().(*Room)
 		}
 	}
 
 	// Prepare 4
-	for _, a := range board.Area {
+	for _, a := range ship.Area {
 		if a.Class == room_1 || a.Class == room_2 {
 			a.ExplorationToken = explorationTokens.Draw().(*ExplorationToken)
 		}
@@ -70,7 +70,7 @@ func (game *Game) Prepare(coop bool) {
 
 	// Crew preparation step 18 A,B,C
 	for _, p := range players {
-		p.Area, board.Area[A11].Players = board.Area[A11], append(board.Area[A11].Players, p)
+		p.Area, ship.Area[A11].Players = ship.Area[A11], append(ship.Area[A11].Players, p)
 	}
 
 	// Crew preparation step 14

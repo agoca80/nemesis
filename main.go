@@ -5,13 +5,16 @@ import (
 )
 
 const (
-	show_board   = true
+	show_ship    = true
 	show_players = true
 	wait         = false
 )
 
 var (
 	game *Game
+
+	ship    *Ship
+	players Players
 )
 
 func main() {

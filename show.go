@@ -83,8 +83,8 @@ func (p Players) Show() {
 	Show()
 }
 
-func (b *Board) Show() {
-	if !show_board {
+func (b *Ship) Show() {
+	if !show_ship {
 		return
 	}
 

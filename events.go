@@ -1,7 +1,7 @@
 package main
 
 func eventFailure(event *Event) {
-	for _, a := range board.Area[A01:A21] {
+	for _, a := range ship.Area[A01:A21] {
 		if a.IsExplored() {
 			a.IsDamaged = true
 		}
@@ -22,7 +22,7 @@ func ResolveEvent(event *Event) {
 		Show("PENDING effect for", event.name)
 	}
 
-	if board.Destroyed() {
+	if ship.Destroyed() {
 		Show("The ship has been destroyed!!!")
 	}
 }

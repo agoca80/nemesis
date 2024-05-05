@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-var (
-	board   *Board
-	players Players
-)
-
 type Game struct {
 	Intruders
 
@@ -121,7 +116,7 @@ func (i *Intruder) FireDamage(damage int) {
 }
 
 func gameOver() bool {
-	return board.Destroyed() || len(players.Alive()) == 0 || game.hyperdriveCountdown == 0
+	return ship.Destroyed() || len(players.Alive()) == 0 || game.hyperdriveCountdown == 0
 }
 
 func (game *Game) Run() {

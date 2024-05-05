@@ -112,12 +112,12 @@ type Gates []*struct {
 	N []int
 }
 
-type Board struct {
+type Ship struct {
 	Area []*Area
 }
 
-func NewBoard() (b *Board) {
-	b = &Board{
+func newShip() (b *Ship) {
+	b = &Ship{
 		Area: areas,
 	}
 
@@ -147,7 +147,7 @@ func NewBoard() (b *Board) {
 	return
 }
 
-func (b *Board) Damages() (damaged int) {
+func (b *Ship) Damages() (damaged int) {
 	for _, area := range b.Area {
 		if area.IsDamaged {
 			damaged++
@@ -156,7 +156,7 @@ func (b *Board) Damages() (damaged int) {
 	return
 }
 
-func (b *Board) Fires() (result int) {
+func (b *Ship) Fires() (result int) {
 	for _, area := range b.Area {
 		if area.IsInFire {
 			result++
@@ -165,6 +165,6 @@ func (b *Board) Fires() (result int) {
 	return
 }
 
-func (b *Board) Destroyed() bool {
+func (b *Ship) Destroyed() bool {
 	return b.Damages() > 8 || b.Fires() > 8
 }

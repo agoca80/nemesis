@@ -265,7 +265,7 @@ func (player *Player) NextAction() {
 
 	resolveAction(action)
 	Show()
-	board.Show()
+	ship.Show()
 	player.Show()
 	Wait()
 }

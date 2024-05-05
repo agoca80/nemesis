@@ -73,7 +73,7 @@ func (g *Game) stepAttacks() Step {
 }
 
 func (g *Game) fireDamage() Step {
-	for _, a := range board.Area {
+	for _, a := range ship.Area {
 		if !a.IsInFire {
 			continue
 		}
@@ -128,7 +128,7 @@ func (g *Game) evolution() Step {
 		rollNoise()
 	case token_queen:
 		var nest *Area
-		for _, a := range board.Area {
+		for _, a := range ship.Area {
 			if a.Name() == room_nest {
 				nest = a
 				break
@@ -152,6 +152,6 @@ func finish() {
 	Show()
 	Show("GAME OVER!!!")
 	Show()
-	board.Show()
+	ship.Show()
 	players.Show()
 }
