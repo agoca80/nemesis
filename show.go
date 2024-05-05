@@ -31,15 +31,15 @@ func (corridors Corridors) String() (result string) {
 	return
 }
 
-func (a *Area) Show() string {
-	actors := []string{}
-	for _, p := range a.Players {
-		actors = append(actors, p.Character)
+func ShowList[T fmt.Stringer](list []T) string {
+	strs := []string{}
+	for _, item := range list {
+		strs = append(strs, item.String())
 	}
-	for _, i := range a.Intruders {
-		actors = append(actors, i.Show())
-	}
+	return strings.Join(strs, " ")
+}
 
+func (a *Area) Show() string {
 	var description string
 	if a.IsExplored() {
 		description = a.name
@@ -47,7 +47,7 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v",
+	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v\t| %v\t| %v",
 		a.IsInFire,
 		a.IsDamaged,
 		a,
@@ -55,7 +55,9 @@ func (a *Area) Show() string {
 		description,
 		a.Corridors,
 		a.Neighbors(),
-		strings.Join(actors, " "),
+		ShowList(a.Players),
+		ShowList(a.Objects),
+		ShowList(a.Intruders),
 	)
 }
 
@@ -83,13 +85,13 @@ func (p Players) Show() {
 	Show()
 }
 
-func (b *Ship) Show() {
+func (s *Ship) Show() {
 	if !show_ship {
 		return
 	}
 
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	for _, a := range b.Area {
+	for _, a := range s.Area {
 		if a.IsReachable() {
 			fmt.Fprintf(output, "%v\n", a.Show())
 		}

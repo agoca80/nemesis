@@ -65,9 +65,7 @@ func (g *Game) counters() Step {
 
 func (g *Game) stepAttacks() Step {
 	for _, i := range game.Intruders {
-		if i.IsInCombat() {
-			i.Attack()
-		}
+		i.Attack()
 	}
 
 	return step_fire
@@ -90,7 +88,7 @@ func (g *Game) event() Step {
 	event := events.Draw().(*Event)
 	Show("Event card is", event.name)
 	for _, i := range game.Intruders {
-		if slices.Contains(event.Symbols, i.Kind) && !i.IsInCombat() {
+		if slices.Contains(event.Symbols, i.Kind) && !i.InCombat() {
 			i.Moves(event.Corridor)
 		}
 	}

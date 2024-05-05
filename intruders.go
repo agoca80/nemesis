@@ -31,14 +31,6 @@ type Intruder struct {
 
 type Intruders []*Intruder
 
-func (i *Intruder) CanAttack() bool {
-	return len(i.Area.Players) > 0
-}
-
-func (i *Intruder) IsInCombat() bool {
-	return len(i.Area.Players) > 0
-}
-
 func (i *Intruder) Leaves() {
 	i.Area.RemIntruder(i)
 	i.Area = nil
@@ -71,9 +63,17 @@ func (i *Intruder) IsAlive() bool {
 	return !i.Dead
 }
 
+func (i *Intruder) InCombat() bool {
+	return len(i.Area.Players.Alive()) > 0
+}
+
 func (i *Intruder) Attack() {
-	// This should be in player attack order
-	player := i.Area.Players[0]
+	if !i.InCombat() {
+		return
+	}
+
+	// Choose the player with the smallest hand size
+	player := players.Alive()[0]
 	for _, p := range i.Area.Players.Alive() {
 		if p.HandSize() < player.HandSize() {
 			player = p
@@ -108,14 +108,14 @@ func spawnIntruder(token *IntruderToken, area *Area) (i *Intruder) {
 	return
 }
 
-func (i *Intruder) Suffers(damage int) (dies bool) {
+func (i *Intruder) Suffers(damage int) {
 	if damage == 0 {
 		return
 	}
 
 	if i.Kind == intruder_egg || i.Kind == intruder_larva {
 		i.Dies()
-		return true
+		return
 	}
 
 	check := 0
@@ -141,29 +141,18 @@ func (i *Intruder) Suffers(damage int) (dies bool) {
 		}
 	}
 
-	if dies = i.Wounds >= check; dies {
+	if i.Wounds < check {
 		i.Dies()
 	}
-	return
 }
 
 func (i *Intruder) Dies() {
 	Show(i, "squacks and dies!")
-	newCarcass(i)
-}
-
-type Carcass struct {
-	*Object
-	*Intruder
-}
-
-func newCarcass(i *Intruder) {
-	carcass := &Object{
+	i.Area.Objects = append(i.Area.Objects, &Object{
 		Area: i.Area,
-		Name: fmt.Sprintf("Carcass(%s)", i),
-	}
+		Name: "carcass",
+	})
 	i.Leaves()
 	index := slices.Index(game.Intruders, i)
 	game.Intruders = slices.Delete(game.Intruders, index, index+1)
-	carcass.Area.Objects = append(carcass.Area.Objects, carcass)
 }

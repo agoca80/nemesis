@@ -94,12 +94,12 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 	}
 
 	if !p.Alive() {
-		// Show(i, "was going to attack", p, "but they are already dead!")
+		Show(i, "was going to attack", p, "but it was already dead!")
 		return
 	}
 
 	if i.Kind == intruder_larva {
-		Show(i, "infestes", p, "!")
+		Show(i, "infects", p, "!")
 		p.IsInfected = true
 		p.SuffersContamination()
 		RemIntruder(i)

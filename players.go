@@ -246,10 +246,8 @@ func (player *Player) ResolveFire(intruder *Intruder) {
 		}
 	}
 
-	Show(player, "opens fire against", intruder, ", rolls", roll, ", deals", damage, "damage")
-	if intruder.Suffers(damage) {
-		Show(intruder, "dies!")
-	}
+	Show(player, "fires against", intruder, ": rolls", roll, ", deals", damage, "damage")
+	intruder.Suffers(damage)
 }
 
 func (player *Player) NextAction() {

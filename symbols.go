@@ -1,17 +1,5 @@
 package main
 
-import "slices"
-
-type Symbols []string
-
-func symbols(symbols ...string) Symbols {
-	return symbols
-}
-
-func (s Symbols) Contains(symbol string) bool {
-	return slices.Contains(s, symbol)
-}
-
 // Actions
 const (
 	// Basic actions

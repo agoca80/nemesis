@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 )
 
@@ -41,3 +42,17 @@ type Object struct {
 }
 
 type Objects []*Object
+
+func (o *Object) String() string {
+	return o.Name
+}
+
+type Symbols []string
+
+func symbols(symbols ...string) Symbols {
+	return symbols
+}
+
+func (s Symbols) Contains(symbol string) bool {
+	return slices.Contains(s, symbol)
+}
