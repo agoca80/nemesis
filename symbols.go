@@ -79,12 +79,13 @@ const (
 )
 
 const (
-	blank   = "blank"
-	larva   = "larva"
-	crawler = "crawler"
-	adult   = "adult"
-	breeder = "breeder"
-	queen   = "queen"
+	intruder_blank   = "blank"
+	intruder_egg     = "egg"
+	intruder_larva   = "larva"
+	intruder_crawler = "crawler"
+	intruder_adult   = "adult"
+	intruder_breeder = "breeder"
+	intruder_queen   = "queen"
 )
 
 // Color symbols

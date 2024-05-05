@@ -8,6 +8,10 @@ import (
 	"text/tabwriter"
 )
 
+func (i *Intruder) Show() string {
+	return fmt.Sprintf("%v%d,%d", i.Kind, i.Id, i.Wounds)
+}
+
 func (c *ContaminationCard) Show() string {
 	return c.Infected.String()
 }
@@ -33,7 +37,7 @@ func (a *Area) Show() string {
 		actors = append(actors, p.Character)
 	}
 	for _, i := range a.Intruders {
-		actors = append(actors, i.Kind)
+		actors = append(actors, i.Show())
 	}
 
 	var description string

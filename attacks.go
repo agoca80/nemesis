@@ -75,7 +75,7 @@ func attackTail(i *Intruder, p *Player) {
 func attackTransformation(i *Intruder, p *Player) {
 	breeders := 0
 	for _, intruder := range game.Intruders {
-		if intruder.Kind == breeder {
+		if intruder.Kind == intruder_breeder {
 			breeders++
 		}
 	}
@@ -87,7 +87,7 @@ func attackTransformation(i *Intruder, p *Player) {
 
 	Show(i, "convulses and transforms into an effing breeder!")
 	RemIntruder(i)
-	transformed := SpawnIntruder(breeder, p.Area)
+	transformed := SpawnIntruder(intruder_breeder, p.Area)
 	if p.HandSize() == 0 {
 		ResolveIntruderAttack(transformed, p)
 	}
@@ -110,7 +110,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 		return
 	}
 
-	if i.Kind == larva {
+	if i.Kind == intruder_larva {
 		Show(i, "infestes", p, "!")
 		p.IsInfected = true
 		p.SuffersContamination()

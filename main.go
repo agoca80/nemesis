@@ -7,7 +7,7 @@ import (
 const (
 	show_board   = true
 	show_players = true
-	wait         = false
+	wait         = true
 )
 
 var (

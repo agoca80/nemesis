@@ -30,3 +30,10 @@ func (a ActionBasic) Cost() int {
 
 	return cost[a]
 }
+
+type Action struct {
+	Name   string
+	Cost   Cards
+	Data   map[string]interface{}
+	Player *Player
+}

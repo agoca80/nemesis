@@ -2,12 +2,6 @@ package main
 
 import "slices"
 
-type Action interface {
-	Name() string
-	Cost() int
-	Resolve(map[string]interface{})
-}
-
 func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	moiseRoll = dstArea.IsEmpty()
 	srcArea := player.Area
@@ -65,20 +59,32 @@ func (p *Player) Pay(card Card) {
 }
 
 func (g *Game) AskAction(player *Player) {
-	actionData := player.NewAction()
-	if actionData == nil {
+	action := player.NewAction()
+	if action == nil {
 		player.Passes()
 		return
 	}
 
-	cost := actionData["cost"].(Cards)
-	for _, card := range cost {
-		player.Pay(card)
-	}
-
-	action := actionData["action"].(Action)
-	action.Resolve(actionData)
+	resolveAction(action)
 	game.Board.Show()
 	player.Show()
 	Wait()
+}
+
+func resolveAction(action *Action) {
+	player := action.Player
+	for _, card := range action.Cost {
+		player.Discard(card)
+	}
+
+	switch action.Name {
+	case basic_move:
+		corridor := action.Data["corridor"].(*Corridor)
+		player.ResolveMove(corridor)
+	case basic_fire:
+		intruder := action.Data["intruder"].(*Intruder)
+		player.ResolveFire(intruder)
+	default:
+		panic("WTF")
+	}
 }
