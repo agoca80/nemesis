@@ -135,9 +135,9 @@ func (game *Game) Run() {
 
 	s := Step(step_draw)
 	for !game.Over() {
-		Show(strings.Repeat(".", 58))
+		Show(strings.Repeat("-", 58))
 		Show(strings.ToUpper(string(s)))
+		Show()
 		s = step[s]()
-		Show(strings.Repeat(".", 58))
 	}
 }

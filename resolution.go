@@ -58,19 +58,6 @@ func (p *Player) Pay(card Card) {
 	p.Discard(card)
 }
 
-func (g *Game) AskAction(player *Player) {
-	action := player.NewAction()
-	if action == nil {
-		player.Passes()
-		return
-	}
-
-	resolveAction(action)
-	game.Board.Show()
-	player.Show()
-	Wait()
-}
-
 func resolveAction(action *Action) {
 	player := action.Player
 	for _, card := range action.Cost {

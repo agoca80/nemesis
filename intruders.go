@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 // weakness_intruder = iota
 // weakness_corpse
@@ -49,7 +51,7 @@ func (i *Intruder) Moves(number int) {
 }
 
 func (i *Intruder) String() string {
-	return i.Kind
+	return fmt.Sprintf("%s%d", i.Kind, i.Id)
 }
 
 func (i *Intruder) IsAlive() bool {

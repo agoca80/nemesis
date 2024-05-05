@@ -253,3 +253,21 @@ func (player *Player) ResolveFire(intruder *Intruder) {
 		Show(intruder, "dies!")
 	}
 }
+
+func (player *Player) NextAction() {
+	if game.Over() || !player.GoingOn() {
+		return
+	}
+
+	action := player.NewAction()
+	if action == nil {
+		player.Passes()
+		return
+	}
+
+	resolveAction(action)
+	game.Board.Show()
+	player.Show()
+	Show()
+	Wait()
+}

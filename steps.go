@@ -33,35 +33,24 @@ func (g *Game) token() Step {
 }
 
 func (g *Game) stepTurn() Step {
-	game.Board.Show()
-	round := func(players Players) (goingOn Players) {
-		for _, player := range players {
-			if player.GoingOn() {
-				g.AskAction(player)
-			}
-			if game.Over() {
-				return
-			}
-			if player.GoingOn() {
-				g.AskAction(player)
-			}
-		}
-
-		if game.Over() {
-			return
-		}
-
-		return players.GoingOn()
-	}
-
-	players := game.Players.Alive()
-	for _, p := range players {
+	for _, p := range game.Players.Alive() {
 		p.Unflips()
 	}
 
-	goingOn := players.GoingOn()
-	for !game.Over() && len(goingOn) > 0 {
-		goingOn = round(goingOn)
+	for {
+		if game.Over() {
+			break
+		}
+
+		goingOn := game.Players.GoingOn()
+		if len(goingOn) == 0 {
+			break
+		}
+
+		for _, player := range goingOn {
+			player.NextAction()
+			player.NextAction()
+		}
 	}
 
 	return step_counters

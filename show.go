@@ -9,7 +9,7 @@ import (
 )
 
 func (i *Intruder) Show() string {
-	return fmt.Sprintf("%v%d,%d", i.Kind, i.Id, i.Wounds)
+	return fmt.Sprintf("%v,%d", i, i.Wounds)
 }
 
 func (c *Contamination) Show() string {
@@ -88,7 +88,6 @@ func (b *Board) Show() {
 		return
 	}
 
-	Show(strings.Repeat("-", 58))
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, a := range b.Area {
 		if !a.IsReachable() {
@@ -98,7 +97,6 @@ func (b *Board) Show() {
 	}
 	fmt.Fprint(output)
 	output.Flush()
-	Show(strings.Repeat("-", 58))
 	Show()
 }
 
