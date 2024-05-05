@@ -33,7 +33,7 @@ func (g *Game) token() Step {
 }
 
 func (g *Game) stepTurn() Step {
-	game.Board.Show()
+	game.Ship.Show()
 	round := func(players Players) (goingOn Players) {
 		for _, player := range players {
 			if player.GoingOn() {
@@ -124,20 +124,20 @@ func (g *Game) evolution() Step {
 			}
 		}
 	}
-	token := game.FetchToken()
+	token := intruderBag.FetchToken()
 	kind := token.Kind
 	switch kind {
 	case token_blank:
 		Show("More adults are lurking on the ship")
-		game.Return(token_adult)
+		intruderBag.Return(token_adult)
 	case token_larva:
 		Show("A larva grows into an adult")
-		game.Retire(token)
-		game.Return(token_adult)
+		intruderBag.Retire(token)
+		intruderBag.Return(token_adult)
 	case token_crawler:
 		Show("A crawler grows into a breeder")
-		game.Retire(token)
-		game.Return(token_breeder)
+		intruderBag.Retire(token)
+		intruderBag.Return(token_breeder)
 	case token_adult:
 		rollNoise()
 	case token_breeder:

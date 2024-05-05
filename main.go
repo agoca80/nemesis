@@ -5,20 +5,21 @@ import (
 )
 
 const (
+	debug        = true
 	show_board   = true
 	show_players = true
 	wait         = false
 )
 
 var (
-	game *Game
+	game        *Game
+	intruderBag *IntruderBag
 )
 
 func main() {
 	cooperative := false
-	players := 5
 
-	game = newGame(players)
+	game = newGame()
 	game.Prepare(cooperative)
 	game.Run()
 	finish()

@@ -44,11 +44,11 @@ func attackFrenzy(i *Intruder, p *Player) {
 func attackMucosity(i *Intruder, p *Player) {
 	Show(i, "covers", p, " in mucus!")
 	p.Discard(contamination.Draw())
-	p.IsDrenched = true
+	p.HasSlime = true
 }
 
 func attackRecall(i *Intruder, p *Player) {
-	token := game.FetchToken()
+	token := intruderBag.FetchToken()
 	if token.Kind == token_blank {
 		Show(i, "in area calls for friends, but it has no effect.")
 	} else {

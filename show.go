@@ -30,7 +30,7 @@ func (corridors Corridors) String() (result string) {
 func (a *Area) Show() string {
 	actors := []string{}
 	for _, p := range a.Players {
-		actors = append(actors, p.Character)
+		actors = append(actors, p.Name())
 	}
 	for _, i := range a.Intruders {
 		actors = append(actors, i.Kind)
@@ -79,12 +79,11 @@ func (p Players) Show() {
 	Show()
 }
 
-func (b *Board) Show() {
+func (b *Ship) Show() {
 	if !show_board {
 		return
 	}
 
-	Show(strings.Repeat("-", 58))
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, a := range b.Area {
 		if !a.IsReachable() {
@@ -94,13 +93,12 @@ func (b *Board) Show() {
 	}
 	fmt.Fprint(output)
 	output.Flush()
-	Show(strings.Repeat("-", 58))
 	Show()
 }
 
 func (game *Game) Show() {
 	game.Players.Show()
-	game.Board.Show()
+	game.Ship.Show()
 }
 
 func Show(args ...interface{}) {
@@ -112,4 +110,14 @@ func Wait() {
 		Show("Press Enter to continue...")
 		bufio.NewReader(os.Stdin).ReadBytes('\n')
 	}
+}
+
+func Debug(args ...interface{}) {
+	if debug {
+		Show(args...)
+	}
+}
+
+func Prompt(message string) {
+	fmt.Print("PROMPT ", message, " > ")
 }

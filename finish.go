@@ -2,6 +2,6 @@ package main
 
 func finish() {
 	Show("GAME OVER!!!")
-	game.Board.Show()
+	game.Ship.Show()
 	game.Players.Show()
 }

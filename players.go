@@ -1,24 +1,42 @@
 package main
 
 import (
+	"fmt"
 	"slices"
 	"strconv"
 )
 
+func (player *Player) Name() string {
+	return player.Character.Name()
+}
+
+func (player *Player) ChooseCharacter(options Cards) (selected, rejected Card) {
+	selected, rejected = player.Choose(options)
+	player.Character = selected.(*Character)
+	Debug(fmt.Sprintf("Player %d picks %-9s and rejects %-9s", player.Id, selected, rejected))
+	return
+}
+
+type PlayerInput interface {
+	Choose(Cards) (selected, rejected Card)
+}
+
 type Player struct {
+	PlayerInput
+
 	*Area
+	*Character
 	*Deck
 	*HelpCard
 
-	Bruises   int
-	Id        int
-	Goals     Cards
-	Hand      Cards
-	Character string
-	Jonesy    bool
-	Wounds    Cards
+	Bruises int
+	Id      int
+	Goals   Cards
+	Hand    Cards
+	Jonesy  bool
+	Wounds  Cards
 
-	IsDrenched Issue
+	HasSlime   Issue
 	IsInfected Issue
 	Signaled   bool
 	State      string
@@ -28,19 +46,27 @@ type Players []*Player
 
 var playerId = 0
 
-func NewPlayer() *Player {
+func newPlayer(human bool) (player *Player) {
 	playerId++
-	return &Player{
+	player = &Player{
 		Id:     playerId,
 		Goals:  Cards{},
 		Hand:   Cards{},
 		Wounds: Cards{},
 		State:  player_alive,
 	}
+
+	if human {
+		player.PlayerInput = newHuman()
+	} else {
+		player.PlayerInput = newDummy()
+	}
+
+	return player
 }
 
 func (p *Player) String() string {
-	return p.Character
+	return p.Character.Name()
 }
 
 func (p *Player) HandCapacity() int {
@@ -137,7 +163,7 @@ func (p *Player) RollNoise() (result string) {
 	}
 
 	result = Roll(noiseDice)
-	if p.IsDrenched && result == silence {
+	if p.HasSlime && result == silence {
 		result = danger
 	}
 	return
@@ -198,8 +224,8 @@ func (p Players) GoingOn() (players Players) {
 func (p *Player) ResolveNoise() {
 	encounter := false
 	result := p.RollNoise()
-	if result == ev_silence && p.IsDrenched {
-		Show(p, "was silent but is drenched in mucus!")
+	if result == ev_silence && p.HasSlime {
+		Show(p, "was silent but is covered in slime!")
 		result = ev_danger
 	}
 
@@ -224,6 +250,6 @@ func (p *Player) ResolveNoise() {
 	}
 
 	if encounter {
-		game.ResolveEncounter(p)
+		ResolveEncounter(p)
 	}
 }

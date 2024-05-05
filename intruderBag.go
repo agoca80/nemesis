@@ -41,7 +41,7 @@ func (ib *IntruderBag) Return(kind string) {
 	ib.outside[kind] = slices.Delete(ib.outside[kind], index, index+1)
 }
 
-func NewIntruderBag(players int) (ib *IntruderBag) {
+func newIntruderBag(players int) (ib *IntruderBag) {
 	ib = &IntruderBag{
 		inside: IntruderTokens{},
 		outside: map[string]IntruderTokens{

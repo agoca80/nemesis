@@ -4,15 +4,17 @@ import (
 	"math/rand"
 )
 
-func (p *Player) chooseCharacter(characters *Deck) {
+type InputDummy struct {
+}
+
+func newDummy() *InputDummy {
+	return &InputDummy{}
+}
+
+func (input *InputDummy) Choose(cards Cards) (selected, rejected Card) {
 	shuffle := rand.Perm(2)
-	options := []Card{
-		characters.Draw(),
-		characters.Draw(),
-	}
-	p.Character = options[shuffle[0]].Name()
-	characters.Return(options[shuffle[1]])
-	characters.Shuffle()
+	selected, rejected = cards[shuffle[0]], cards[shuffle[1]]
+	return
 }
 
 func (p *Player) chooseCorridor() *Corridor {

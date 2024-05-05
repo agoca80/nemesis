@@ -13,6 +13,20 @@ type AttackCard struct {
 	Symbols
 }
 
+type Character struct {
+	*card
+}
+
+func newCharacter(name string) *Character {
+	return &Character{
+		card: newCard(name),
+	}
+}
+
+func (c *Character) String() string {
+	return c.name
+}
+
 type ContaminationCard struct {
 	*card
 	Infected Issue

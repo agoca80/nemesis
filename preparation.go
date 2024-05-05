@@ -6,7 +6,7 @@ import (
 
 func (game *Game) Prepare(coop bool) {
 	// Prepare 1
-	game.Board = NewBoard()
+	game.Ship = NewBoard()
 
 	// Prepare 2
 	for _, a := range game.Area {
@@ -63,7 +63,7 @@ func (game *Game) Prepare(coop bool) {
 	}
 
 	// Initialize intruder bag
-	game.IntruderBag = NewIntruderBag(len(game.Players))
+	intruderBag = newIntruderBag(len(game.Players))
 
 	// Initialize hyperdrive countdown
 	game.hyperdriveCountdown = 15
@@ -90,12 +90,17 @@ func (game *Game) Prepare(coop bool) {
 
 	// Crew preparation step 17
 	for _, p := range game.Players {
-		p.chooseCharacter(characters)
+		_, rejected := p.ChooseCharacter(Cards{
+			characters.Random(),
+			characters.Random(),
+		})
+		characters.Return(rejected)
+		characters.Shuffle()
 	}
 
 	// Crew preparation step 18
 	for _, p := range game.Players {
-		p.Deck = actions[p.Character]
+		p.Deck = actions[p.Character.Name()]
 	}
 
 	// Step 19

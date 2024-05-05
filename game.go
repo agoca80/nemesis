@@ -10,8 +10,7 @@ type Game struct {
 	Intruders
 	Players
 
-	*Board
-	*IntruderBag
+	*Ship
 
 	// Decks
 	HelpDeck  *Deck
@@ -28,35 +27,37 @@ type Game struct {
 	Weakness            []*Weakness
 }
 
-func newGame(players int) (game *Game) {
+func newGame() (game *Game) {
 	game = &Game{
 		Players: Players{},
 
 		GoalsCoop: newDeck(goalsCoop),
-		GoalsCorp: newDeck(goalsCorp[:players+4]),
-		GoalsPriv: newDeck(goalsPriv[:players+4]),
-		HelpDeck:  newDeck(helpCards[:players]),
+		GoalsCorp: newDeck(goalsCorp),
+		GoalsPriv: newDeck(goalsPriv),
+		HelpDeck:  newDeck(helpCards),
 	}
 
-	for range players {
-		game.Players = append(game.Players, NewPlayer())
-	}
+	game.Players = append(game.Players, newPlayer(true))
+	game.Players = append(game.Players, newPlayer(false))
+	game.Players = append(game.Players, newPlayer(false))
+	game.Players = append(game.Players, newPlayer(false))
+	game.Players = append(game.Players, newPlayer(false))
 
 	return
 }
 
-func (game *Game) ResolveEncounter(p *Player) {
-	token := game.FetchToken()
+func ResolveEncounter(player *Player) {
+	token := intruderBag.FetchToken()
 	kind := token.name
 	if kind == token_blank {
 		Show("Unexpectedly, nothing happened")
 		return
 	}
 
-	intruder := NewIntruder(token, p.Area)
-	if p.IsSurprised(token) {
-		Show(p, "is surprised by", intruder)
-		ResolveIntruderAttack(intruder, p)
+	intruder := NewIntruder(token, player.Area)
+	if player.IsSurprised(token) {
+		Show(intruder, "takes", player, "by surprise!")
+		ResolveIntruderAttack(intruder, player)
 	}
 }
 
@@ -67,7 +68,7 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 
 	event = token.Event
 	Show(player, "reveals", token, "in the", area.name)
-	if event == ev_silence && player.IsDrenched {
+	if event == ev_silence && player.HasSlime {
 		Show(player, "tried to be silent but they were too noisy...")
 		event = ev_danger
 	}
@@ -84,7 +85,7 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 	case ev_fire:
 		area.IsInFire = true
 	case ev_mucus:
-		player.IsDrenched = true
+		player.HasSlime = true
 	}
 
 	if area.name != room_nest && area.name != room_slime {
@@ -135,9 +136,10 @@ func (game *Game) Run() {
 
 	s := Step(step_draw)
 	for !game.Over() {
-		Show(strings.Repeat(".", 58))
+		Show(strings.Repeat("-", 58))
 		Show(strings.ToUpper(string(s)))
+		Show()
 		s = step[s]()
-		Show(strings.Repeat(".", 58))
+
 	}
 }

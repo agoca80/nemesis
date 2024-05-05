@@ -87,7 +87,7 @@ func SpawnIntruder(kind string, area *Area) (i *Intruder) {
 
 func NewIntruder(token *IntruderToken, area *Area) (i *Intruder) {
 	i = SpawnIntruder(token.Kind, area)
-	game.Retire(token)
+	intruderBag.Retire(token)
 	return
 }
 
