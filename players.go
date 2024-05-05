@@ -253,3 +253,12 @@ func (p *Player) ResolveNoise() {
 		ResolveEncounter(p)
 	}
 }
+
+func (player *Player) MovesTo(dstArea *Area) (noiseRoll bool) {
+	noiseRoll = dstArea.IsEmpty()
+	srcArea := player.Area
+	srcArea.RemPlayer(player)
+	player.Area, dstArea.Players = dstArea, append(dstArea.Players, player)
+	Show(player, "moves to", dstArea)
+	return
+}
