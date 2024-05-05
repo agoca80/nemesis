@@ -4,7 +4,11 @@ import "slices"
 
 type Symbols []string
 
-func (s Symbols) Includes(symbol string) bool {
+func symbols(symbols ...string) Symbols {
+	return symbols
+}
+
+func (s Symbols) Contains(symbol string) bool {
 	return slices.Contains(s, symbol)
 }
 
@@ -78,14 +82,25 @@ const (
 	S02
 )
 
+// attack symbols
 const (
-	intruder_blank   = "blank"
-	intruder_egg     = "egg"
-	intruder_larva   = "larva"
-	intruder_crawler = "crawler"
-	intruder_adult   = "adult"
-	intruder_breeder = "breeder"
-	intruder_queen   = "queen"
+	attack_bite           = "bite"
+	attack_claws          = "claws"
+	attack_frenzy         = "frenzy"
+	attack_mucosity       = "mucosity"
+	attack_recall         = "recall"
+	attack_scratch        = "scratch"
+	attack_tail           = "tail"
+	attack_transformation = "transformation"
+)
+
+// Damage dice
+const (
+	damage_blank   = "blank"
+	damage_crawler = "crawler"
+	damage_adult   = "adult"
+	damage_single  = "single"
+	damage_double  = "double"
 )
 
 // Color symbols
@@ -139,6 +154,17 @@ const (
 	step_fire      = "fire Damage"
 	step_event     = "event"
 	step_evolution = "evolution"
+)
+
+// Intruder symbols
+const (
+	intruder_blank   = "blank"
+	intruder_egg     = "egg"
+	intruder_larva   = "larva"
+	intruder_crawler = "crawler"
+	intruder_adult   = "adult"
+	intruder_breeder = "breeder"
+	intruder_queen   = "queen"
 )
 
 // noise events

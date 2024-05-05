@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 const (
 // weakness_intruder = iota
@@ -105,10 +108,6 @@ func spawnIntruder(token *IntruderToken, area *Area) (i *Intruder) {
 	return
 }
 
-func (i *Intruder) Dies() {
-	Pending(i, "Intruder has died!")
-}
-
 func (i *Intruder) Suffers(damage int) (dies bool) {
 	if damage == 0 {
 		return
@@ -133,6 +132,7 @@ func (i *Intruder) Suffers(damage int) (dies bool) {
 
 	i.Wounds += damage
 	for _, c := range cards {
+		Show(i, "draws", c)
 		if c.Retreats() {
 			Show(i, "in", i.Area, "retreats!")
 			direction := events.Next().(*Event)
@@ -145,4 +145,25 @@ func (i *Intruder) Suffers(damage int) (dies bool) {
 		i.Dies()
 	}
 	return
+}
+
+func (i *Intruder) Dies() {
+	Show(i, "squacks and dies!")
+	newCarcass(i)
+}
+
+type Carcass struct {
+	*Object
+	*Intruder
+}
+
+func newCarcass(i *Intruder) {
+	carcass := &Object{
+		Area: i.Area,
+		Name: fmt.Sprintf("Carcass(%s)", i),
+	}
+	i.Leaves()
+	index := slices.Index(game.Intruders, i)
+	game.Intruders = slices.Delete(game.Intruders, index, index+1)
+	carcass.Area.Objects = append(carcass.Area.Objects, carcass)
 }

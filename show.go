@@ -90,10 +90,9 @@ func (b *Board) Show() {
 
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, a := range b.Area {
-		if !a.IsReachable() {
-			continue
+		if a.IsReachable() && (!a.IsEmpty() || len(a.Objects) > 0) {
+			fmt.Fprintf(output, "%v\n", a.Show())
 		}
-		fmt.Fprintf(output, "%v\n", a.Show())
 	}
 	fmt.Fprint(output)
 	output.Flush()

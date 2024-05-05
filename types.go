@@ -34,3 +34,10 @@ func (i Issue) String() string {
 	}
 	return "."
 }
+
+type Object struct {
+	Area *Area
+	Name string
+}
+
+type Objects []*Object

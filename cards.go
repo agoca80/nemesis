@@ -13,6 +13,10 @@ type Attack struct {
 	Symbols
 }
 
+func (a *Attack) String() string {
+	return fmt.Sprintf("%s(%d) %v", a.name, a.Wounds, a.Symbols)
+}
+
 type Contamination struct {
 	*card
 	Infected Issue

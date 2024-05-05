@@ -231,21 +231,19 @@ func (p *Player) ResolveNoise() {
 func (player *Player) ResolveFire(intruder *Intruder) {
 	var damage int
 	var roll = player.RollDamage()
-	switch {
-	case roll == damage_double:
+	switch roll {
+	case damage_double:
 		damage = 2
-	case roll == damage_single:
+	case damage_single:
 		damage = 1
-	case roll == intruder.Kind:
-		damage = 1
-	case roll == intruder_adult && intruder.Kind == intruder_crawler:
-		damage = 1
-	case roll == intruder_adult && intruder.Kind == intruder_larva:
-		damage = 1
-	case roll == intruder_adult && intruder.Kind == intruder_egg:
-		damage = 1
-	case roll == intruder_blank:
-		damage = 0
+	case intruder_adult:
+		if symbols(intruder_adult, intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
+			damage = 1
+		}
+	case intruder_crawler:
+		if symbols(intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
+			damage = 1
+		}
 	}
 
 	Show(player, "opens fire against", intruder, ", rolls", roll, ", deals", damage, "damage")
@@ -270,4 +268,17 @@ func (player *Player) NextAction() {
 	game.Board.Show()
 	player.Show()
 	Wait()
+}
+
+func (p *Player) RollDamage() (result string) {
+	damageDice := Symbols{
+		damage_blank,
+		damage_crawler,
+		damage_crawler,
+		damage_adult,
+		damage_single,
+		damage_double,
+	}
+
+	return Roll(damageDice)
 }

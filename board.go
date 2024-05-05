@@ -13,6 +13,7 @@ type Area struct {
 
 	Corridors
 	Intruders
+	Objects
 	Players
 
 	*Room
@@ -24,8 +25,9 @@ func newArea(id int, class string) *Area {
 	return &Area{
 		Id:        id,
 		Class:     class,
-		Players:   Players{},
 		Intruders: Intruders{},
+		Objects:   Objects{},
+		Players:   Players{},
 	}
 }
 

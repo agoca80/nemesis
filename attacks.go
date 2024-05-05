@@ -1,17 +1,5 @@
 package main
 
-// attack symbols
-const (
-	attack_bite           = "bite"
-	attack_claws          = "claws"
-	attack_frenzy         = "frenzy"
-	attack_mucosity       = "mucosity"
-	attack_recall         = "recall"
-	attack_scratch        = "scratch"
-	attack_tail           = "tail"
-	attack_transformation = "transformation"
-)
-
 func attackByte(i *Intruder, p *Player) {
 	Show(i, "bytes", p, "!")
 	if len(p.Wounds) == 2 {
@@ -119,7 +107,7 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 	}
 
 	attack := attacks.Next().(*Attack)
-	if !attack.Includes(i.Kind) {
+	if !attack.Contains(i.Kind) {
 		Show(i, "attacks", p, "but fails!")
 		return
 	}
@@ -133,30 +121,4 @@ func ResolveIntruderAttack(i *Intruder, p *Player) {
 
 func (a *Attack) Retreats() bool {
 	return a.Wounds == 0
-}
-
-func (a *Attack) String() string {
-	return a.card.name
-}
-
-// Damage dice
-const (
-	damage_blank   = "none"
-	damage_crawler = "crawler"
-	damage_adult   = "adult"
-	damage_single  = "single"
-	damage_double  = "double"
-)
-
-func (p *Player) RollDamage() (result string) {
-	damageDice := Symbols{
-		damage_blank,
-		damage_crawler,
-		damage_crawler,
-		damage_adult,
-		damage_single,
-		damage_double,
-	}
-
-	return Roll(damageDice)
 }
