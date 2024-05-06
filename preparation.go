@@ -110,15 +110,16 @@ func (game *Game) Prepare(coop bool) {
 		}
 		selected, rejected := player.Choose(options)
 		Show(fmt.Sprintf("%s picks %-9s, rejects %s", player.Id, selected, rejected))
-		player.Character = selected.Name()
+		player.Character = selected
 		characters.Return(rejected)
 		characters.Shuffle()
 	}
 	Show()
 
 	// Crew preparation step 18
-	for _, p := range players {
-		p.Deck = actions[p.Character]
+	for _, player := range players {
+		character := player.Character.Name()
+		player.Deck = actions[character]
 	}
 
 	// Step 19

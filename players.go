@@ -11,10 +11,10 @@ type Player struct {
 	*HelpCard
 
 	Bruises   int
+	Character Card
 	Goals     Cards
 	Hand      Cards
 	Id        string
-	Character string
 	Jonesy    bool
 	Wounds    Cards
 
@@ -40,7 +40,7 @@ func NewPlayer() *Player {
 }
 
 func (p *Player) String() string {
-	return p.Character
+	return p.Character.Name()
 }
 
 func (p *Player) HandCapacity() int {
