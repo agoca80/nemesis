@@ -126,12 +126,12 @@ var attacks = newDeck(Cards{
 })
 
 var characters = newDeck(Cards{
-	newCard(captain),
-	newCard(explorer),
-	newCard(mechanic),
-	newCard(pilot),
-	newCard(scientist),
-	newCard(soldier),
+	newCharacter(captain),
+	newCharacter(explorer),
+	newCharacter(mechanic),
+	newCharacter(pilot),
+	newCharacter(scientist),
+	newCharacter(soldier),
 })
 
 var contamination = newDeck(Cards{
@@ -296,11 +296,11 @@ var goalsPriv = Cards{
 }
 
 var helpCards = Cards{
-	NewHelpCard(1),
-	NewHelpCard(2),
-	NewHelpCard(3),
-	NewHelpCard(4),
-	NewHelpCard(5),
+	newHelpCard(1),
+	newHelpCard(2),
+	newHelpCard(3),
+	newHelpCard(4),
+	newHelpCard(5),
 }
 
 var rooms1 = newDeck(Cards{

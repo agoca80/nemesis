@@ -4,15 +4,9 @@ import (
 	"math/rand"
 )
 
-func (p *Player) chooseCharacter(characters *Deck) {
+func (p *Player) Choose(options Cards) (selected, rejected Card) {
 	shuffle := rand.Perm(2)
-	options := []Card{
-		characters.Draw(),
-		characters.Draw(),
-	}
-	p.Character = options[shuffle[0]].Name()
-	characters.Return(options[shuffle[1]])
-	characters.Shuffle()
+	return options[shuffle[0]], options[shuffle[1]]
 }
 
 func (p *Player) chooseCorridor() *Corridor {

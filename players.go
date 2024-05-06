@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"slices"
 	"strconv"
 )
@@ -11,9 +12,9 @@ type Player struct {
 	*HelpCard
 
 	Bruises   int
-	Id        int
 	Goals     Cards
 	Hand      Cards
+	Id        string
 	Character string
 	Jonesy    bool
 	Wounds    Cards
@@ -31,7 +32,7 @@ var playerId = 0
 func NewPlayer() *Player {
 	playerId++
 	return &Player{
-		Id:     playerId,
+		Id:     fmt.Sprintf("player%d", playerId),
 		Goals:  Cards{},
 		Hand:   Cards{},
 		Wounds: Cards{},
@@ -40,7 +41,7 @@ func NewPlayer() *Player {
 }
 
 func (p *Player) String() string {
-	return p.Character
+	return p.Id
 }
 
 func (p *Player) HandCapacity() int {

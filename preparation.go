@@ -1,10 +1,18 @@
 package main
 
 import (
+	"cmp"
+	"fmt"
 	"math/rand"
+	"slices"
+	"strings"
 )
 
 func (game *Game) Prepare(coop bool) {
+	Show(strings.Repeat("-", 58))
+	Show(strings.ToUpper("Preparation"))
+	Show()
+
 	// Prepare 1
 	ship = newShip()
 
@@ -75,9 +83,11 @@ func (game *Game) Prepare(coop bool) {
 
 	// Crew preparation step 14
 	helpDeck := newDeck(helpCards[:len(players)])
-	for _, p := range players {
-		p.HelpCard = helpDeck.Draw().(*HelpCard)
+	for _, player := range players {
+		player.HelpCard = helpDeck.Draw().(*HelpCard)
+		Show(player, "takes", player.HelpCard)
 	}
+	Show()
 
 	// Crew preparation step 16
 	for _, p := range players {
@@ -89,9 +99,22 @@ func (game *Game) Prepare(coop bool) {
 	}
 
 	// Crew preparation step 17
-	for _, p := range players {
-		p.chooseCharacter(characters)
+	sorted := players[:]
+	slices.SortFunc(sorted, func(a, b *Player) int {
+		return cmp.Compare(a.Number, b.Number)
+	})
+	for _, player := range sorted {
+		options := []Card{
+			characters.Draw(),
+			characters.Draw(),
+		}
+		selected, rejected := player.Choose(options)
+		Show(fmt.Sprintf("%s picks %-9s, rejects %s", player, selected, rejected))
+		player.Character = selected.Name()
+		characters.Return(rejected)
+		characters.Shuffle()
 	}
+	Show()
 
 	// Crew preparation step 18
 	for _, p := range players {

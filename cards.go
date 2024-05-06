@@ -17,6 +17,20 @@ func (a *Attack) String() string {
 	return fmt.Sprintf("%s(%d) %v", a.name, a.Wounds, a.Symbols)
 }
 
+type Character struct {
+	*card
+}
+
+func newCharacter(name string) *Character {
+	return &Character{
+		card: newCard(name),
+	}
+}
+
+func (c *Character) String() string {
+	return c.name
+}
+
 type Contamination struct {
 	*card
 	Infected Issue
@@ -59,6 +73,32 @@ type Goal struct {
 	Number int
 	Kind   string
 	eval   func(*Game) bool
+}
+
+type HelpCard struct {
+	*card
+	Number  int
+	Flipped bool
+}
+
+func newHelpCard(number int) *HelpCard {
+	return &HelpCard{
+		card:    newCard("Help card"),
+		Number:  number,
+		Flipped: false,
+	}
+}
+
+func (hc *HelpCard) String() string {
+	return fmt.Sprintf("%s %d", hc.name, hc.Number)
+}
+
+func (hc *HelpCard) Unflips() {
+	hc.Flipped = false
+}
+
+func (hc *HelpCard) Flips() {
+	hc.Flipped = true
 }
 
 type IntruderToken struct {
