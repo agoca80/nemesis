@@ -119,7 +119,8 @@ const (
 
 // event symbols
 const (
-	event_failure = "failure"
+	event_failure  = "failure"
+	event_hatching = "hatching"
 )
 
 // Exploration token events

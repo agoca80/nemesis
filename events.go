@@ -11,9 +11,36 @@ func eventFailure(event *Event) {
 	events.Shuffle()
 }
 
+func eventHatching(event *Event) {
+	availableCrawlers := 3
+	for _, i := range game.Intruders {
+		if i.Kind == intruder_crawler {
+			availableCrawlers--
+		}
+	}
+
+	for _, player := range players.Alive() {
+		switch {
+		case player.IsInfected && availableCrawlers > 0:
+			player.Dies()
+			newIntruder(intruder_crawler, player.Area)
+			availableCrawlers--
+		case player.IsInfected:
+			player.Dies()
+		case !player.IsInfected:
+			for range 4 {
+				card := player.Draw()
+				player.IsInfected = card.Name() == "contamination" && card.(*Contamination).Infected
+				player.Discard(card)
+			}
+		}
+	}
+}
+
 func ResolveEvent(event *Event) {
 	var effects = map[string]func(*Event){
-		event_failure: eventFailure,
+		event_failure:  eventFailure,
+		event_hatching: eventHatching,
 	}
 
 	if effect, ok := effects[event.name]; ok {

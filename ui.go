@@ -13,7 +13,7 @@ func (i *Intruder) Show() string {
 }
 
 func (c *Contamination) Show() string {
-	return c.Infected.String()
+	return Issue(c.Infected).String()
 }
 
 func (corridors Corridors) String() (result string) {

@@ -33,13 +33,13 @@ func (c *Character) String() string {
 
 type Contamination struct {
 	*card
-	Infected Issue
+	Infected bool
 }
 
 func newContamination(infected bool) *Contamination {
 	return &Contamination{
 		card:     newCard("contamination"),
-		Infected: Issue(infected),
+		Infected: infected,
 	}
 }
 

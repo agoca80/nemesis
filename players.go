@@ -19,7 +19,7 @@ type Player struct {
 	Wounds    Cards
 
 	IsDrenched Issue
-	IsInfected Issue
+	IsInfected bool
 	Signaled   bool
 	State      string
 }

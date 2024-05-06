@@ -215,6 +215,8 @@ var gates = Gates{
 }
 
 var events = newDeck(Cards{
+	newEvent(1, event_hatching, intruder_crawler, intruder_breeder, intruder_queen),
+	newEvent(2, event_failure, intruder_adult, intruder_breeder),
 	newEvent(1, "Fuga de refrigerante", intruder_adult, intruder_breeder, intruder_queen),
 	newEvent(3, "Eclosion", intruder_adult, intruder_breeder),
 	newEvent(4, "Ruido en los pasillos de servicio", intruder_adult, intruder_breeder),
@@ -229,8 +231,6 @@ var events = newDeck(Cards{
 	newEvent(1, "Apertura de compuertas", intruder_adult, intruder_breeder),
 	newEvent(4, "Fuego devastador", intruder_crawler, intruder_breeder, intruder_queen),
 	newEvent(1, "Regeneracion", intruder_breeder, intruder_queen),
-	newEvent(2, event_failure, intruder_adult, intruder_breeder),
-	newEvent(1, "Nacimiento", intruder_crawler, intruder_breeder, intruder_queen),
 	newEvent(3, "Caceria", intruder_crawler, intruder_queen),
 	newEvent(4, "cortocircuito", intruder_adult, intruder_breeder, intruder_queen),
 	newEvent(2, "caceria", intruder_crawler, intruder_breeder, intruder_queen),
