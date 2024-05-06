@@ -47,7 +47,7 @@ func (a *Area) Show() string {
 		description = "Unexplored"
 	}
 
-	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v\t| %v\t| %v",
+	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v\t| %v",
 		a.IsInFire,
 		a.IsDamaged,
 		a,
@@ -55,8 +55,7 @@ func (a *Area) Show() string {
 		description,
 		a.Corridors,
 		a.Neighbors(),
-		ShowList(a.Players),
-		ShowList(a.Objects),
+		ShowList(a.Players.Alive()),
 		ShowList(a.Intruders),
 	)
 }

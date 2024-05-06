@@ -165,6 +165,11 @@ const (
 	n4      = "4"
 )
 
+// object symbols
+const (
+	object_carcass = "carcass"
+)
+
 // player states
 const (
 	player_alive    = "alive"

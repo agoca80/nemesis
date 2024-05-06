@@ -1,15 +1,9 @@
 package main
 
-import "slices"
-
-func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
-	moiseRoll = dstArea.IsEmpty()
-	srcArea := player.Area
-	srcArea.RemPlayer(player)
-	player.Area, dstArea.Players = dstArea, append(dstArea.Players, player)
-	Show(player, "moves to", dstArea)
-	return
-}
+import (
+	"slices"
+	"strconv"
+)
 
 func (player *Player) ResolveMove(corridor *Corridor) {
 	if player.IsInCombat() {
@@ -31,6 +25,10 @@ func (player *Player) ResolveMove(corridor *Corridor) {
 
 	if ship.Destroyed() {
 		return
+	}
+
+	if c := player.Area.Carcasses(); c > 0 {
+		Show("There are", c, "carcasses in the area")
 	}
 
 	if noiseRoll && event != ev_danger && event != ev_silence {
@@ -70,5 +68,60 @@ func resolveAction(action *Action) {
 		player.ResolveFire(intruder)
 	default:
 		panic("WTF")
+	}
+}
+
+func (player *Player) ResolveFire(intruder *Intruder) {
+	var damage int
+	var roll = player.RollDamage()
+	switch roll {
+	case damage_double:
+		damage = 2
+	case damage_single:
+		damage = 1
+	case intruder_adult:
+		if symbols(intruder_adult, intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
+			damage = 1
+		}
+	case intruder_crawler:
+		if symbols(intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
+			damage = 1
+		}
+	}
+
+	Show(player, "fires against", intruder, ": rolls", roll, ", deals", damage, "damage")
+	intruder.Suffers(damage)
+}
+
+func (p *Player) ResolveNoise() {
+	encounter := false
+	result := p.RollNoise()
+	if result == ev_silence && p.IsDrenched {
+		Show(p, "was silent but is drenched in mucus!")
+		result = ev_danger
+	}
+
+	switch result {
+	case ev_silence:
+		Show(p, "is silent...")
+	case ev_danger:
+		Show(p, "is in danger!")
+		p.Danger()
+	default:
+		n, _ := strconv.Atoi(result)
+		corridor := p.Corridor(n)
+		Show(p, "makes noise in corridor", corridor.Numbers)
+		if corridor.Noise {
+			for _, c := range p.Area.Corridors {
+				c.Noise = false
+			}
+			encounter = true
+		} else {
+			corridor.Noise = true
+		}
+	}
+
+	if encounter {
+		game.ResolveEncounter(p)
 	}
 }

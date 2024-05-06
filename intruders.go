@@ -141,7 +141,7 @@ func (i *Intruder) Suffers(damage int) {
 		}
 	}
 
-	if i.Wounds < check {
+	if i.Wounds >= check {
 		i.Dies()
 	}
 }

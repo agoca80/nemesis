@@ -85,7 +85,7 @@ func (game *Game) Prepare(coop bool) {
 	helpDeck := newDeck(helpCards[:len(players)])
 	for _, player := range players {
 		player.HelpCard = helpDeck.Draw().(*HelpCard)
-		Show(player, "takes", player.HelpCard)
+		Show(player.Id, "takes", player.HelpCard)
 	}
 	Show()
 
@@ -109,7 +109,7 @@ func (game *Game) Prepare(coop bool) {
 			characters.Draw(),
 		}
 		selected, rejected := player.Choose(options)
-		Show(fmt.Sprintf("%s picks %-9s, rejects %s", player, selected, rejected))
+		Show(fmt.Sprintf("%s picks %-9s, rejects %s", player.Id, selected, rejected))
 		player.Character = selected.Name()
 		characters.Return(rejected)
 		characters.Shuffle()

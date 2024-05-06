@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"slices"
-	"strconv"
 )
 
 type Player struct {
@@ -32,7 +31,7 @@ var playerId = 0
 func NewPlayer() *Player {
 	playerId++
 	return &Player{
-		Id:     fmt.Sprintf("player%d", playerId),
+		Id:     fmt.Sprintf("p%d", playerId),
 		Goals:  Cards{},
 		Hand:   Cards{},
 		Wounds: Cards{},
@@ -41,7 +40,7 @@ func NewPlayer() *Player {
 }
 
 func (p *Player) String() string {
-	return p.Id
+	return p.Character
 }
 
 func (p *Player) HandCapacity() int {
@@ -196,61 +195,6 @@ func (p Players) GoingOn() (players Players) {
 	return
 }
 
-func (p *Player) ResolveNoise() {
-	encounter := false
-	result := p.RollNoise()
-	if result == ev_silence && p.IsDrenched {
-		Show(p, "was silent but is drenched in mucus!")
-		result = ev_danger
-	}
-
-	switch result {
-	case ev_silence:
-		Show(p, "is silent...")
-	case ev_danger:
-		Show(p, "is in danger!")
-		p.Danger()
-	default:
-		n, _ := strconv.Atoi(result)
-		corridor := p.Corridor(n)
-		Show(p, "makes noise in corridor", corridor.Numbers)
-		if corridor.Noise {
-			for _, c := range p.Area.Corridors {
-				c.Noise = false
-			}
-			encounter = true
-		} else {
-			corridor.Noise = true
-		}
-	}
-
-	if encounter {
-		game.ResolveEncounter(p)
-	}
-}
-
-func (player *Player) ResolveFire(intruder *Intruder) {
-	var damage int
-	var roll = player.RollDamage()
-	switch roll {
-	case damage_double:
-		damage = 2
-	case damage_single:
-		damage = 1
-	case intruder_adult:
-		if symbols(intruder_adult, intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
-			damage = 1
-		}
-	case intruder_crawler:
-		if symbols(intruder_crawler, intruder_larva, intruder_egg).Contains(intruder.Kind) {
-			damage = 1
-		}
-	}
-
-	Show(player, "fires against", intruder, ": rolls", roll, ", deals", damage, "damage")
-	intruder.Suffers(damage)
-}
-
 func (player *Player) NextAction() {
 	if gameOver() || !player.GoingOn() {
 		return
@@ -280,4 +224,13 @@ func (p *Player) RollDamage() (result string) {
 	}
 
 	return Roll(damageDice)
+}
+
+func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
+	moiseRoll = dstArea.IsEmpty()
+	srcArea := player.Area
+	srcArea.RemPlayer(player)
+	player.Area, dstArea.Players = dstArea, append(dstArea.Players, player)
+	Show(player, "moves to", dstArea)
+	return
 }
