@@ -63,7 +63,7 @@ func (a *Area) Show() string {
 func (p *Player) Show() string {
 	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
 		p.Character,
-		p.IsInfected,
+		Issue(p.IsInfected),
 		p.State,
 		p.Bruises,
 		p.Wounds,
