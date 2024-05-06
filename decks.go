@@ -19,6 +19,7 @@ type Deck struct {
 }
 
 type Card interface {
+	Id() string
 	Name() string
 	String() string
 }
@@ -31,6 +32,10 @@ func newCard(name string) *card {
 		id:   fmt.Sprintf("%c%02d", deckId, cardId),
 		name: name,
 	}
+}
+
+func (c *card) Id() string {
+	return c.id
 }
 
 func (c *card) Name() string {
