@@ -209,7 +209,7 @@ func (player *Player) NextAction() {
 	resolveAction(action)
 	Show()
 	ship.Show()
-	player.Show()
+	player.Describe()
 	Wait()
 }
 

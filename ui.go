@@ -53,17 +53,6 @@ func (a *Area) Show() string {
 	)
 }
 
-func (p *Player) Show() string {
-	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
-		p.Character,
-		Issue(p.IsInfected),
-		p.State,
-		p.Bruises,
-		p.Wounds,
-		p.Hand,
-	)
-}
-
 func (p Players) Show() {
 	if !show_players {
 		return
@@ -71,7 +60,7 @@ func (p Players) Show() {
 
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, player := range p {
-		fmt.Fprintf(output, "%v\n", player.Show())
+		fmt.Fprintf(output, "%v\n", player.Describe())
 	}
 	output.Flush()
 	Show()

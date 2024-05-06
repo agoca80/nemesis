@@ -99,3 +99,14 @@ func (a *Area) Corridor(n int) *Corridor {
 	}
 	return nil
 }
+
+func (p *Player) Describe() string {
+	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
+		p.Character,
+		Issue(p.IsInfected),
+		p.State,
+		p.Bruises,
+		p.Wounds,
+		p.Hand,
+	)
+}
