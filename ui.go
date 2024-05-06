@@ -40,19 +40,12 @@ func ShowList[T fmt.Stringer](list []T) string {
 }
 
 func (a *Area) Show() string {
-	var description string
-	if a.IsExplored() {
-		description = a.name
-	} else {
-		description = "Unexplored"
-	}
-
 	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v\t| %v",
 		a.IsInFire,
 		a.IsDamaged,
 		a,
 		a.Items,
-		description,
+		a.Describe(),
 		a.Corridors,
 		a.Neighbors(),
 		ShowList(a.Players.Alive()),

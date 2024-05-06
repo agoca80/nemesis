@@ -31,6 +31,13 @@ func newArea(id int, class string) *Area {
 	}
 }
 
+func (a *Area) Describe() string {
+	if a.IsExplored() {
+		return a.name
+	}
+	return "Unexplored"
+}
+
 func (a *Area) Carcasses() (total int) {
 	for _, o := range a.Objects {
 		if o.Name == object_carcass {
