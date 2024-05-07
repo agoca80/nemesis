@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	debug        = false
 	show_ship    = true
 	show_players = true
 	wait         = false

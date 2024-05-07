@@ -40,8 +40,8 @@ func newGame(numPlayers int) (game *Game) {
 		HelpDeck:  newDeck(helpCards[:numPlayers]),
 	}
 
-	for range numPlayers {
-		players = append(players, NewPlayer())
+	for i := range numPlayers {
+		players = append(players, NewPlayer(i == 0 && !debug))
 	}
 
 	return

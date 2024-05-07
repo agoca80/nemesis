@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-func (p *Player) Choose(options Cards) (selected, rejected Card) {
+func dummyChoose(options Cards) (selected, rejected Card) {
 	shuffle := rand.Perm(2)
 	return options[shuffle[0]], options[shuffle[1]]
 }
@@ -19,7 +19,7 @@ func (p *Player) chooseCorridor() *Corridor {
 	return options[rand.Intn(len(options))]
 }
 
-func (player *Player) NewAction() (action *Action) {
+func dummyNextAction(player *Player) (action *Action) {
 	if player.HandSize() < 1 {
 		return
 	}

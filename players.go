@@ -20,6 +20,7 @@ type Player struct {
 
 	IsDrenched Issue
 	IsInfected bool
+	IsHuman    bool
 	Signaled   bool
 	State      string
 }
@@ -28,14 +29,15 @@ type Players []*Player
 
 var playerId = 0
 
-func NewPlayer() *Player {
+func NewPlayer(isHuman bool) *Player {
 	playerId++
 	return &Player{
-		Id:     fmt.Sprintf("p%d", playerId),
-		Goals:  Cards{},
-		Hand:   Cards{},
-		Wounds: Cards{},
-		State:  player_alive,
+		Id:      fmt.Sprintf("p%d", playerId),
+		Goals:   Cards{},
+		Hand:    Cards{},
+		IsHuman: isHuman,
+		Wounds:  Cards{},
+		State:   player_alive,
 	}
 }
 
@@ -178,11 +180,16 @@ func (p *Player) GoingOn() bool {
 }
 
 func (player *Player) NextAction() {
+	nextAction := map[bool]func(*Player) *Action{
+		false: dummyNextAction,
+		true:  dummyNextAction,
+	}
+
 	if gameOver() || !player.GoingOn() {
 		return
 	}
 
-	action := player.NewAction()
+	action := nextAction[player.IsHuman](player)
 	if action == nil {
 		player.Passes()
 		return
@@ -234,4 +241,13 @@ func (p Players) Alive() Players {
 
 func (p Players) GoingOn() Players {
 	return Filter(p, (*Player).GoingOn)
+}
+
+func (player *Player) Choose(options Cards) (selected, rejected Card) {
+	switch player.IsHuman {
+	case true:
+		return humanChoose(options)
+	default:
+		return dummyChoose(options)
+	}
 }
