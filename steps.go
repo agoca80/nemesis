@@ -64,7 +64,9 @@ func (g *Game) counters() Step {
 }
 
 func (g *Game) stepAttacks() Step {
-	for _, i := range game.Intruders {
+	currentIntruders := make(Intruders, len(game.Intruders))
+	copy(currentIntruders, game.Intruders)
+	for _, i := range currentIntruders {
 		i.Attack()
 	}
 
