@@ -6,9 +6,13 @@ import (
 	"strings"
 )
 
-type Game struct {
-	Intruders
+var (
+	intruders Intruders
+	players   Players
+	ship      *Ship
+)
 
+type Game struct {
 	*IntruderBag
 
 	// Decks
@@ -54,7 +58,7 @@ func (game *Game) ResolveEncounter(p *Player) {
 	intruder := spawnIntruder(token, p.Area)
 	if p.IsSurprised(token) {
 		Show(p, "is surprised by", intruder)
-		ResolveIntruderAttack(intruder, p)
+		intruder.ResolveAttack(p)
 	}
 }
 
@@ -98,8 +102,8 @@ func Roll(dice []string) string {
 }
 
 func RemIntruder(i *Intruder) {
-	index, a := slices.Index(game.Intruders, i), i.Area
-	game.Intruders = slices.Delete(game.Intruders, index, index+1)
+	index, a := slices.Index(intruders, i), i.Area
+	intruders = slices.Delete(intruders, index, index+1)
 	a.RemIntruder(i)
 }
 
@@ -138,4 +142,8 @@ func (game *Game) Run() {
 		Show()
 		s = step[s]()
 	}
+}
+
+func (game *Game) Intruders() Intruders {
+	return intruders
 }

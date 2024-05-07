@@ -62,7 +62,7 @@ func attackTail(i *Intruder, p *Player) {
 
 func attackTransformation(i *Intruder, p *Player) {
 	breeders := 0
-	for _, intruder := range game.Intruders {
+	for _, intruder := range game.Intruders() {
 		if intruder.Kind == intruder_breeder {
 			breeders++
 		}
@@ -75,47 +75,9 @@ func attackTransformation(i *Intruder, p *Player) {
 
 	Show(i, "convulses and transforms into an effing breeder!")
 	RemIntruder(i)
-	transformed := newIntruder(intruder_breeder, p.Area)
+	breeder := newIntruder(intruder_breeder, p.Area)
 	if p.HandSize() == 0 {
-		ResolveIntruderAttack(transformed, p)
-	}
-}
-
-func ResolveIntruderAttack(i *Intruder, p *Player) {
-	effect := map[string]func(*Intruder, *Player){
-		attack_claws:          attackClaws,
-		attack_frenzy:         attackFrenzy,
-		attack_tail:           attackTail,
-		attack_transformation: attackTransformation,
-		attack_bite:           attackByte,
-		attack_mucosity:       attackMucosity,
-		attack_recall:         attackRecall,
-		attack_scratch:        attackScratch,
-	}
-
-	if !p.Alive() {
-		Show(i, "was going to attack", p, "but it was already dead!")
-		return
-	}
-
-	if i.Kind == intruder_larva {
-		Show(i, "infects", p, "!")
-		p.IsInfected = true
-		p.SuffersContamination()
-		RemIntruder(i)
-		return
-	}
-
-	attack := attacks.Next().(*Attack)
-	if !attack.Contains(i.Kind) {
-		Show(i, "attacks", p, "but fails!")
-		return
-	}
-
-	if fn, ok := effect[attack.name]; !ok {
-		Show("PENDING", attack, "function not implemented.")
-	} else {
-		fn(i, p)
+		breeder.ResolveAttack(p)
 	}
 }
 

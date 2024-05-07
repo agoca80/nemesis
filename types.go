@@ -6,10 +6,6 @@ import (
 	"sort"
 )
 
-type Actor interface {
-	Dies()
-}
-
 type ExplorationTokenType string
 
 type Issue bool

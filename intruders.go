@@ -67,26 +67,20 @@ func (i *Intruder) InCombat() bool {
 	return len(i.Area.Players.Alive()) > 0
 }
 
-func (i *Intruder) Attack() {
-	if !i.InCombat() {
+func (intruder *Intruder) Attack() {
+	if !intruder.InCombat() {
 		return
 	}
 
 	// Choose the player with the smallest hand size
 	player := players.Alive()[0]
-	for _, p := range i.Area.Players.Alive() {
+	for _, p := range intruder.Area.Players.Alive() {
 		if p.HandSize() < player.HandSize() {
 			player = p
 		}
 	}
 
-	ResolveIntruderAttack(i, player)
-}
-
-func (i Intruders) Attack(p *Player) {
-	for _, intruder := range i {
-		ResolveIntruderAttack(intruder, p)
-	}
+	intruder.ResolveAttack(player)
 }
 
 func newIntruder(kind string, area *Area) (i *Intruder) {
@@ -97,7 +91,7 @@ func newIntruder(kind string, area *Area) (i *Intruder) {
 		Kind: kind,
 	}
 	intruderIds[kind]++
-	game.Intruders = append(game.Intruders, i)
+	intruders = append(game.Intruders(), i)
 	area.Intruders = append(area.Intruders, i)
 	return
 }
@@ -153,6 +147,49 @@ func (i *Intruder) Dies() {
 		Name: "carcass",
 	})
 	i.Leaves()
-	index := slices.Index(game.Intruders, i)
-	game.Intruders = slices.Delete(game.Intruders, index, index+1)
+	i.Dead = true
+	index := slices.Index(intruders, i)
+	intruders = slices.Delete(intruders, index, index+1)
+}
+
+func (i *Intruder) ResolveAttack(p *Player) {
+	effect := map[string]func(*Intruder, *Player){
+		attack_claws:          attackClaws,
+		attack_frenzy:         attackFrenzy,
+		attack_tail:           attackTail,
+		attack_transformation: attackTransformation,
+		attack_bite:           attackByte,
+		attack_mucosity:       attackMucosity,
+		attack_recall:         attackRecall,
+		attack_scratch:        attackScratch,
+	}
+
+	if !p.Alive() {
+		Show(i, "was going to attack", p, "but it was already dead!")
+		return
+	}
+
+	if i.Kind == intruder_larva {
+		Show(i, "infects", p, "!")
+		p.IsInfected = true
+		p.SuffersContamination()
+		RemIntruder(i)
+		return
+	}
+
+	attack := attacks.Next().(*Attack)
+	if !attack.Contains(i.Kind) {
+		Show(i, "attacks", p, "but fails!")
+		return
+	}
+
+	if fn, ok := effect[attack.name]; !ok {
+		Show("PENDING", attack, "function not implemented.")
+	} else {
+		fn(i, p)
+	}
+}
+
+func (i *Intruder) Alive() bool {
+	return !i.Dead
 }

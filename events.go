@@ -13,7 +13,7 @@ func eventFailure(event *Event) {
 
 func eventHatching(event *Event) {
 	availableCrawlers := 3
-	for _, i := range game.Intruders {
+	for _, i := range game.Intruders() {
 		if i.Kind == intruder_crawler {
 			availableCrawlers--
 		}

@@ -8,7 +8,9 @@ import (
 func (player *Player) ResolveMove(corridor *Corridor) {
 	if player.IsInCombat() {
 		Show(player, "tries to leave", player.Area)
-		player.Area.Intruders.Attack(player)
+	}
+	for _, intruder := range player.Area.Intruders {
+		intruder.ResolveAttack(player)
 	}
 
 	if !player.Alive() {

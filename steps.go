@@ -64,9 +64,8 @@ func (g *Game) counters() Step {
 }
 
 func (g *Game) stepAttacks() Step {
-	currentIntruders := make(Intruders, len(game.Intruders))
-	copy(currentIntruders, game.Intruders)
-	for _, i := range currentIntruders {
+	intrudersAlive := Filter(intruders, (*Intruder).Alive)
+	for _, i := range intrudersAlive {
 		i.Attack()
 	}
 
@@ -89,7 +88,7 @@ func (g *Game) fireDamage() Step {
 func (g *Game) event() Step {
 	event := events.Draw().(*Event)
 	Show("Event card is", event.name)
-	for _, i := range game.Intruders {
+	for _, i := range game.Intruders() {
 		if slices.Contains(event.Symbols, i.Kind) && !i.InCombat() {
 			i.Moves(event.Corridor)
 		}

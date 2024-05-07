@@ -12,9 +12,6 @@ const (
 
 var (
 	game *Game
-
-	ship    *Ship
-	players Players
 )
 
 func main() {
