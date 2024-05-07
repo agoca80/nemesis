@@ -1,31 +1,5 @@
 package main
 
-type Corridor struct {
-	Id    int
-	AreaX *Area
-	AreaY *Area
-	Door  string
-	Noise Issue
-	Numbers
-}
-
-func (c *Corridor) Danger() {
-	c.Noise = true
-}
-
-func (c *Corridor) End(a *Area) *Area {
-	if a == c.AreaX {
-		return c.AreaY
-	}
-	return c.AreaX
-}
-
-func (c *Corridor) IsReachable() bool {
-	return c.Door == door_open && c.AreaX.IsReachable() && c.AreaY.IsReachable()
-}
-
-type Corridors []*Corridor
-
 type Gates []*struct {
 	X int
 	Y int

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strings"
 )
 
 type ExplorationTokenType string
@@ -51,4 +52,8 @@ func symbols(symbols ...string) Symbols {
 
 func (s Symbols) Contains(symbol string) bool {
 	return slices.Contains(s, symbol)
+}
+
+func (s Symbols) String() string {
+	return strings.Join(s, " ")
 }

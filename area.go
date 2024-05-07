@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"slices"
 )
@@ -108,4 +109,72 @@ func (a *Area) Burning() {
 
 func (a *Area) IsBurning() bool {
 	return a.isInFire
+}
+
+func (a *Area) ShowCorridors() (str string) {
+	ends := Symbols{}
+	numbers := Symbols{}
+	doors := ""
+	noise := ""
+	for number := 1; number < 5; number++ {
+		corridor := a.Corridor(number)
+		switch {
+		case corridor.IsReachable():
+			doors += corridor.Door
+			noise += Issue(corridor.Noise).String()
+			numbers = append(numbers, corridor.Numbers.String())
+			ends = append(ends, corridor.End(a).String())
+		default:
+			doors += "T"
+			noise += Issue(corridor.Noise).String()
+			numbers = append(numbers, corridor.Numbers.String())
+			ends = append(ends, "ST")
+		}
+	}
+
+	return fmt.Sprintf("%s %s %s %s", doors, ends, numbers, noise)
+}
+
+// func (a *Area) ShowCorridors() (str string) {
+// 	corridors := make(Corridors, len(a.Corridors))
+// 	copy(corridors, a.Corridors)
+// 	slices.SortFunc(corridors, func(c1, c2 *Corridor) int {
+// 		return cmp.Compare(c1.End(a).Id, c2.End(a).Id)
+// 	})
+
+// 	ends := Symbols{}
+// 	numbers := Symbols{}
+// 	doors := ""
+// 	noise := ""
+// 	for _, corridor := range corridors {
+// 		doors += corridor.Door
+// 		noise += Issue(corridor.Noise).String()
+// 		numbers = append(numbers, corridor.Numbers.String())
+// 		ends = append(ends, corridor.End(a).String())
+// 	}
+
+// 	return fmt.Sprintf("%s\t%s\t%s\t%s", ends, doors, numbers, noise)
+// }
+
+type Direction struct {
+	*Area
+	*Corridor
+}
+
+type Directions []*Direction
+
+func (a *Area) Directions() (d Directions) {
+	for _, corridor := range a.Corridors {
+		if corridor.IsReachable() && corridor.Door != door_closed {
+			d = append(d, &Direction{corridor.End(a), corridor})
+		}
+	}
+	slices.SortFunc(d, func(d1, d2 *Direction) int {
+		return cmp.Compare(d1.Corridor.Numbers.String(), d2.Corridor.Numbers.String())
+	})
+	return
+}
+
+func (d *Direction) String() string {
+	return fmt.Sprintf("%v>%v", d.Area, d.Corridor.Numbers)
 }

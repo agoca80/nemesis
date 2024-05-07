@@ -2,6 +2,31 @@ package main
 
 import "fmt"
 
+func newActionCard(cost int, name string) *ActionCard {
+	return &ActionCard{
+		card: newCard(name),
+		cost: cost,
+	}
+}
+
+func (ac *ActionCard) Cost() int {
+	return ac.cost
+}
+
+func (a ActionBasic) Cost() int {
+	cost := map[ActionBasic]int{
+		basic_careful:  2,
+		basic_move:     1,
+		basic_fire:     1,
+		basic_fight:    1,
+		basic_pickup:   1,
+		basic_exchange: 1,
+		basic_prepare:  1,
+	}
+
+	return cost[a]
+}
+
 type ActionCard struct {
 	*card
 	cost int
@@ -64,6 +89,10 @@ type Event struct {
 	*card
 	Corridor int
 	Symbols
+}
+
+func (e *Event) String() string {
+	return fmt.Sprintf("%s %d %v", e.name, e.Corridor, e.Symbols)
 }
 
 type ExplorationToken struct {

@@ -23,7 +23,9 @@ func (g *Game) token() Step {
 	}
 
 	players = append(players[first:], players[:first]...)
-	players.Alive().Show()
+	players.Show()
+	ship.Show()
+
 	return step_turn
 }
 
@@ -43,6 +45,7 @@ func (g *Game) stepTurn() Step {
 		}
 
 		for _, player := range goingOn {
+			Show(player, "round")
 			player.NextAction()
 			player.NextAction()
 		}

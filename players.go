@@ -54,7 +54,10 @@ func (p *Player) HandCapacity() int {
 }
 
 func (p *Player) HandSize() int {
-	return len(p.Hand)
+	actionCards := Filter(p.Hand, func(c Card) bool {
+		return c.Name() != "contamination"
+	})
+	return len(actionCards)
 }
 
 func (p *Player) DrawActions() {
@@ -181,8 +184,8 @@ func (p *Player) GoingOn() bool {
 
 func (player *Player) NextAction() {
 	nextAction := map[bool]func(*Player) *Action{
-		false: dummyNextAction,
-		true:  dummyNextAction,
+		false: dummyAction,
+		true:  humanAction,
 	}
 
 	if gameOver() || !player.GoingOn() {
@@ -246,8 +249,27 @@ func (p Players) GoingOn() Players {
 func (player *Player) Choose(options Cards) (selected, rejected Card) {
 	switch player.IsHuman {
 	case true:
-		return humanChoose(options)
+		return chooseCharacter(options)
 	default:
 		return dummyChoose(options)
 	}
+}
+
+func (player *Player) AvailableActions() (actions Actions) {
+	actions = Actions{}
+	switch {
+	case player.IsInCombat():
+		actions = append(actions, Actions{
+			&Action{Name: basic_escape},
+			&Action{Name: basic_fight},
+			&Action{Name: basic_fire},
+		}...)
+	case !player.IsInCombat():
+		actions = append(actions, Actions{
+			&Action{Name: basic_move},
+			&Action{Name: basic_careful},
+		}...)
+	}
+
+	return
 }

@@ -6,28 +6,89 @@ import (
 	"os"
 )
 
-func Prompt(message string) {
-	fmt.Print("PROMPT ", message, " > ")
-}
-
-func humanChoose(cards Cards) (selected, rejected Card) {
+func humanChoose[L ~[]E, E any](message string, options L) (selected E) {
 	var stdin = bufio.NewReader(os.Stdin)
-	var choice string
-	for _, c := range cards {
-		Show(c.Id(), c.Name())
+	var choice int
+	Show()
+	Show("PROMPT", message, ">")
+	for i, o := range options {
+		Show(">", i, "-", o)
 	}
 	for {
-		Prompt("Choose a card")
+		fmt.Print("> ")
 		input, _ := fmt.Fscanln(stdin, &choice)
-		switch {
-		case input == 0:
-			fallthrough
-		case choice == cards[0].Id():
-			return cards[0], cards[1]
-		case choice == cards[1].Id():
-			return cards[1], cards[0]
+		if input == 0 {
+			selected = options[0]
+			break
+		} else if 0 <= choice && choice < len(options) {
+			selected = options[choice]
+			break
 		}
 	}
+	Show()
+	return
+}
+
+func chooseCharacter(cards Cards) (selected, rejected Card) {
+	selected = humanChoose("Choose a card", cards)
+	switch selected.Id() {
+	case cards[0].Id():
+		rejected = cards[1]
+	case cards[1].Id():
+		rejected = cards[0]
+	}
+	return
+}
+
+func humanChooseDirection(player *Player) (direction *Direction) {
+	directions := player.Area.Directions()
+	direction = humanChoose("Choose a direction", directions)
+	return
+}
+
+func humanChooseAction(player *Player) (action *Action) {
+	choices := player.AvailableActions()
+	action = humanChoose("Choose an action", choices)
+	return
+}
+
+func humanChooseIntruder(player *Player) (intruder *Intruder) {
+	choices := player.Area.Intruders
+	intruder = humanChoose("Choose an intruder", choices)
+	return
+}
+
+func humanAction(player *Player) (action *Action) {
+	if player.HandSize() < 1 {
+		return
+	}
+
+	if action = humanChooseAction(player); action == nil {
+		return
+	}
+
+	var name string
+	var data map[string]interface{}
+	switch action.Name {
+	case basic_fire:
+		name, data = basic_fire, map[string]interface{}{
+			"intruder": humanChooseIntruder(player),
+		}
+	case basic_move:
+		direction := humanChooseDirection(player)
+		name, data = basic_move, map[string]interface{}{
+			"corridor": direction.Corridor,
+		}
+	}
+
+	action = &Action{
+		Cost:   Cards{player.Hand[0]},
+		Player: player,
+		Name:   name,
+		Data:   data,
+	}
+
+	return action
 }
 
 func Wait() {

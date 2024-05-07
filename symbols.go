@@ -3,13 +3,14 @@ package main
 // Actions
 const (
 	// Basic actions
+	basic_careful  = "Careful movement"
+	basic_escape   = "Escape"
 	basic_move     = "Move"
 	basic_fire     = "Fire"
 	basic_fight    = "Fight"
 	basic_pickup   = "Pick up"
 	basic_exchange = "Exchange"
 	basic_prepare  = "Prepare"
-	basic_sneak    = "Sneak"
 
 	// Card actions
 	action_adrenaline        = "Adrenaline"

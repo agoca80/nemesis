@@ -9,7 +9,7 @@ func dummyChoose(options Cards) (selected, rejected Card) {
 	return options[shuffle[0]], options[shuffle[1]]
 }
 
-func (p *Player) chooseCorridor() *Corridor {
+func dummyChooseCorridor(p *Player) *Corridor {
 	options := Corridors{}
 	for _, c := range p.Area.Corridors {
 		if c.IsReachable() {
@@ -19,7 +19,7 @@ func (p *Player) chooseCorridor() *Corridor {
 	return options[rand.Intn(len(options))]
 }
 
-func dummyNextAction(player *Player) (action *Action) {
+func dummyAction(player *Player) (action *Action) {
 	if player.HandSize() < 1 {
 		return
 	}
@@ -33,7 +33,7 @@ func dummyNextAction(player *Player) (action *Action) {
 			"intruder": intruder,
 		}
 	case !player.IsInCombat():
-		corridor := player.chooseCorridor()
+		corridor := dummyChooseCorridor(player)
 		name, data = basic_move, map[string]interface{}{
 			"corridor": corridor,
 		}

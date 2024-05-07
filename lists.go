@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strings"
+)
+
 type List interface {
 	Size()
 	Item() any
@@ -34,4 +39,12 @@ func Reduce[L ~[]E, E, R any](list L, fn func(R, E) R, initial R) (result R) {
 		result = fn(result, element)
 	}
 	return
+}
+
+func ShowList[T fmt.Stringer](list []T) string {
+	strs := []string{}
+	for _, item := range list {
+		strs = append(strs, item.String())
+	}
+	return strings.Join(strs, " ")
 }
