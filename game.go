@@ -76,7 +76,7 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 
 	switch event {
 	case ev_damaged:
-		area.IsDamaged = true
+		area.Damage()
 	case ev_danger:
 		area.Danger()
 	case ev_door:
@@ -84,7 +84,7 @@ func (game *Game) ResolveExploration(player *Player, corridor *Corridor) (event 
 			corridor.Door = door_closed
 		}
 	case ev_fire:
-		area.IsInFire = true
+		area.Burning()
 	case ev_mucus:
 		player.IsDrenched = true
 	}

@@ -64,7 +64,7 @@ func (p *Player) DrawActions() {
 func (p *Player) Passes() {
 	Show(p, "passes")
 	p.Flips()
-	if p.Area.IsInFire {
+	if p.Area.IsBurning() {
 		p.SuffersLightWound()
 	}
 
@@ -173,26 +173,8 @@ func (p *Player) Alive() bool {
 	return p.State == player_alive
 }
 
-func (p Players) Alive() (players Players) {
-	for _, player := range p {
-		if player.Alive() {
-			players = append(players, player)
-		}
-	}
-	return
-}
-
 func (p *Player) GoingOn() bool {
 	return p.State == player_alive && !p.HasPassed()
-}
-
-func (p Players) GoingOn() (players Players) {
-	for _, player := range p {
-		if player.GoingOn() {
-			players = append(players, player)
-		}
-	}
-	return
 }
 
 func (player *Player) NextAction() {
@@ -233,4 +215,23 @@ func (player *Player) MovesTo(dstArea *Area) (moiseRoll bool) {
 	player.Area, dstArea.Players = dstArea, append(dstArea.Players, player)
 	Show(player, "moves to", dstArea)
 	return
+}
+
+func (p *Player) Describe() string {
+	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
+		p.Character,
+		Issue(p.IsInfected),
+		p.State,
+		p.Bruises,
+		p.Wounds,
+		p.Hand,
+	)
+}
+
+func (p Players) Alive() Players {
+	return Filter(p, (*Player).Alive)
+}
+
+func (p Players) GoingOn() Players {
+	return Filter(p, (*Player).GoingOn)
 }

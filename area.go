@@ -6,10 +6,11 @@ import (
 )
 
 type Area struct {
-	Id        int
-	Class     string
-	IsDamaged Issue
-	IsInFire  Issue
+	isDamaged bool
+	isInFire  bool
+
+	Id    int
+	Class string
 
 	Corridors
 	Intruders
@@ -39,18 +40,16 @@ func (a *Area) Describe() string {
 }
 
 func (a *Area) Carcasses() (total int) {
-	for _, o := range a.Objects {
+	Each(a.Objects, func(o *Object) {
 		if o.Name == object_carcass {
 			total++
 		}
-	}
+	})
 	return
 }
 
 func (a *Area) Danger() {
-	for _, c := range a.Corridors {
-		c.Noise = true
-	}
+	Each(a.Corridors, (*Corridor).Danger)
 }
 
 func (a *Area) IsExplored() bool {
@@ -66,12 +65,9 @@ func (a *Area) IsReachable() bool {
 }
 
 func (a *Area) Neighbors() (neighbors Areas) {
-	neighbors = Areas{}
-	for _, corridor := range a.Corridors {
-		end := corridor.End(a)
-		if end.IsReachable() {
-			neighbors = append(neighbors, corridor.End(a))
-		}
+	reachable := Filter(a.Corridors, (*Corridor).IsReachable)
+	for _, corridor := range reachable {
+		neighbors = append(neighbors, corridor.End(a))
 	}
 
 	return neighbors
@@ -92,21 +88,24 @@ func (a *Area) String() string {
 }
 
 func (a *Area) Corridor(n int) *Corridor {
-	for _, c := range a.Corridors {
-		if slices.Contains(c.Numbers, n) {
-			return c
-		}
-	}
-	return nil
+	index := slices.IndexFunc(a.Corridors, func(c *Corridor) bool {
+		return slices.Contains(c.Numbers, n)
+	})
+	return a.Corridors[index]
 }
 
-func (p *Player) Describe() string {
-	return fmt.Sprintf("%v\t(%v)\t%v\t%v+%v\tHand %v",
-		p.Character,
-		Issue(p.IsInfected),
-		p.State,
-		p.Bruises,
-		p.Wounds,
-		p.Hand,
-	)
+func (a *Area) IsDamaged() bool {
+	return a.isDamaged
+}
+
+func (a *Area) Damage() {
+	a.isDamaged = true
+}
+
+func (a *Area) Burning() {
+	a.isInFire = true
+}
+
+func (a *Area) IsBurning() bool {
+	return a.isInFire
 }

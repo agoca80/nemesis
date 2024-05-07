@@ -41,8 +41,8 @@ func ShowList[T fmt.Stringer](list []T) string {
 
 func (a *Area) Show() string {
 	return fmt.Sprintf(" %v%v %s,%d %-21s\t> %v\t%v\t| %v\t| %v",
-		a.IsInFire,
-		a.IsDamaged,
+		Issue(a.IsBurning()),
+		Issue(a.IsDamaged()),
 		a,
 		a.Items,
 		a.Describe(),

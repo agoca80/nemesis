@@ -9,6 +9,10 @@ type Corridor struct {
 	Numbers
 }
 
+func (c *Corridor) Danger() {
+	c.Noise = true
+}
+
 func (c *Corridor) End(a *Area) *Area {
 	if a == c.AreaX {
 		return c.AreaY
@@ -64,24 +68,8 @@ func newShip() (b *Ship) {
 	return
 }
 
-func (b *Ship) Damages() (damaged int) {
-	for _, area := range b.Area {
-		if area.IsDamaged {
-			damaged++
-		}
-	}
-	return
-}
-
-func (b *Ship) Fires() (result int) {
-	for _, area := range b.Area {
-		if area.IsInFire {
-			result++
-		}
-	}
-	return
-}
-
 func (b *Ship) Destroyed() bool {
-	return b.Damages() > 8 || b.Fires() > 8
+	fires := len(Filter(b.Area, (*Area).IsBurning))
+	damages := len(Filter(b.Area, (*Area).IsDamaged))
+	return fires > 8 || damages > 8
 }

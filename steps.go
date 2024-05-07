@@ -73,11 +73,8 @@ func (g *Game) stepAttacks() Step {
 }
 
 func (g *Game) fireDamage() Step {
-	for _, a := range ship.Area {
-		if !a.IsInFire {
-			continue
-		}
-
+	burningAreas := Filter(ship.Area, (*Area).IsBurning)
+	for _, a := range burningAreas {
 		for _, intruder := range a.Intruders {
 			intruder.FireDamage(1)
 		}

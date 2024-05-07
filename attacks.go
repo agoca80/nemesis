@@ -20,7 +20,7 @@ func attackClaws(i *Intruder, p *Player) {
 
 func attackFrenzy(i *Intruder, p *Player) {
 	Show(i, "in area", i.Area, "goes into a frenzy!!!")
-	for _, player := range i.Area.Players.Alive() {
+	for _, player := range players.Alive() {
 		if len(player.Wounds) < 2 {
 			player.SufferSeriousWound()
 		} else {
@@ -79,8 +79,4 @@ func attackTransformation(i *Intruder, p *Player) {
 	if p.HandSize() == 0 {
 		breeder.ResolveAttack(p)
 	}
-}
-
-func (a *Attack) Retreats() bool {
-	return a.Wounds == 0
 }

@@ -13,6 +13,10 @@ type Attack struct {
 	Symbols
 }
 
+func (a *Attack) Retreats() bool {
+	return a.Wounds == 0
+}
+
 func (a *Attack) String() string {
 	return fmt.Sprintf("%s(%d) %v", a.name, a.Wounds, a.Symbols)
 }
@@ -116,14 +120,6 @@ type Item struct {
 	Cost      int
 }
 
-type Room struct {
-	*card
-	Color            string
-	Computer         bool
-	ExplorationToken *ExplorationToken
-	Items            int
-}
-
 type Weakness struct {
 	*card
 	Revealed bool
@@ -205,6 +201,14 @@ func newGoal(players int, name string) *Goal {
 			return false
 		},
 	}
+}
+
+type Room struct {
+	*card
+	Color            string
+	Computer         bool
+	ExplorationToken *ExplorationToken
+	Items            int
 }
 
 func newRoom(name, color string, computer bool) *Room {

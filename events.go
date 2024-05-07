@@ -1,23 +1,16 @@
 package main
 
 func eventFailure(event *Event) {
-	for _, a := range ship.Area[A01:A21] {
-		if a.IsExplored() {
-			a.IsDamaged = true
-			break
-		}
-	}
+	explored := Filter(ship.Area, (*Area).IsExplored)
+	Each(explored, (*Area).Damage)
 	events.Return(event)
 	events.Shuffle()
 }
 
 func eventHatching(event *Event) {
-	availableCrawlers := 3
-	for _, i := range game.Intruders() {
-		if i.Kind == intruder_crawler {
-			availableCrawlers--
-		}
-	}
+	availableCrawlers := 3 - len(Filter(intruders, func(i *Intruder) bool {
+		return i.Kind == intruder_crawler && i.Alive()
+	}))
 
 	for _, player := range players.Alive() {
 		switch {

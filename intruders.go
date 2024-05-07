@@ -73,14 +73,15 @@ func (intruder *Intruder) Attack() {
 	}
 
 	// Choose the player with the smallest hand size
-	player := players.Alive()[0]
-	for _, p := range intruder.Area.Players.Alive() {
-		if p.HandSize() < player.HandSize() {
-			player = p
+	players := intruder.Area.Players.Alive()
+	smallest := players[0]
+	for _, p := range players.Alive() {
+		if p.HandSize() < smallest.HandSize() {
+			smallest = p
 		}
 	}
 
-	intruder.ResolveAttack(player)
+	intruder.ResolveAttack(smallest)
 }
 
 func newIntruder(kind string, area *Area) (i *Intruder) {
